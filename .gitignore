@@ -18,3 +18,9 @@
 Makefile.in
 
 /ocl-icd-*.tar.gz
+/rust/target/
+/rust/libocl-icd-rs.a
+/rust/rust-loader.map
+/rust/.cargo-home/
+/rust/.libs/
+__pycache__/

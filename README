@@ -17,6 +17,17 @@ then:
 So, if an other OpenCL ICD loader is installed on the system, this
 allows us to discover the mapping of new entries in the structure,
 entries that are then recoreded in the YAML database.
+
+  Calling configure with --enable-rust-loader builds the Rust port of the
+loader (in the rust/ directory) instead of the C one. It is a drop-in
+replacement: the resulting libOpenCL exports the same symbols under the same
+OPENCL_x.y version nodes and reports the same loader identity strings. The
+crate is generated from the same YAML database (slot indices can never drift)
+and is dependency-free, so only a Rust toolchain (rustc/cargo) is needed in
+addition to the usual build tools. The port's dispatch, deinit and layer code
+paths are exercised by the regular "make check". cllayerinfo still embeds the
+C loader (it only lists layers and never dispatches to vendors); porting it is
+on the roadmap.
   Of course, if the currently installed OpenCL ICD loader is this one,
 there wont be any problems but no new mapping will be discovered.
 

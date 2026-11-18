@@ -1,0 +1,18 @@
+[workspace]
+resolver = "2"
+
+[package]
+name = "ocl-icd-rs"
+version = "2.3.5"
+edition = "2021"
+description = "Rust port of the ocl-icd OpenCL ICD loader"
+license = "BSD-2-Clause"
+
+[lib]
+crate-type = ["cdylib"]
+
+# No crates.io dependencies: the small libc surface used (dlopen family) is
+# declared directly in src/clib.rs, so the crate builds offline in CI.
+
+[profile.release]
+debug = 2

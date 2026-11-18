@@ -1,0 +1,35 @@
+name: Rust loader
+on: [push, pull_request]
+
+jobs:
+  build-and-check:
+    name: Build and Check (Rust loader)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: ./bootstrap
+      - run: ./configure --enable-rust-loader --enable-official-khronos-headers
+      - run: make
+      # the upstream testsuite must pass against the Rust loader as well
+      - run: make check
+      # prove the binary really carries the Rust code (not silently the C one)
+      - run: nm -D --defined-only .libs/libOpenCL.so.1.0.0 | grep -q "@@OPENCL_1.0"
+      - run: nm --defined-only .libs/libOpenCL.so.1.0.0 | grep -q "_ZN10ocl_icd_rs"
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: rust-loader-testsuite
+          path: |
+            tests/testsuite.log
+
+  distcheck:
+    name: Distcheck (Rust loader)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: ./bootstrap
+      - run: ./configure
+      # VPATH build: exercises rust/build-loader.sh out-of-tree materialisation
+      - run: make distcheck DISTCHECK_CONFIGURE_FLAGS="--enable-rust-loader"

@@ -46,23 +46,52 @@ libOpenCL_la_CFLAGS= $(NO_DEPRECATED_DECLARATIONS_FLAGS) \
 	-DETC_OPENCL_VENDORS=\"@OCL_ICD_VENDORDIR@\" \
 	-DETC_OPENCL_LAYERS=\"@OCL_ICD_LAYERDIR@\"
 
-libOpenCL_la_SOURCES = ocl_icd_loader.c ocl_icd_loader.h ocl_icd_debug.h
-nodist_libOpenCL_la_SOURCES = ocl_icd_loader_gen.c ocl_icd.h
 libOpenCL_la_LDFLAGS = -version-info 1:0:0 $(PTHREAD_CFLAGS)
 libOpenCL_la_LIBADD = $(PTHREAD_LIBS)
-if USE_MAP
+if RUST_LOADER
+# The Rust crate replaces the whole C loader implementation. Its objects are
+# archived (rust/build-loader.sh) and linked into libOpenCL like any other
+# convenience library, with the OPENCL_x.y version nodes applied by the
+# version map derived from ocl_icd_loader_gen.map.
+libOpenCL_la_LIBADD += rust/libocl-icd-rs.a
+libOpenCL_la_LDFLAGS += -Wl,--version-script,rust/rust-loader.map \
+	-Wl,--whole-archive -Wl,rust/libocl-icd-rs.a -Wl,--no-whole-archive
+libOpenCL_la_DEPENDS = rust/libocl-icd-rs.a rust/rust-loader.map
+else
+libOpenCL_la_SOURCES = ocl_icd_loader.c ocl_icd_loader.h ocl_icd_debug.h
+nodist_libOpenCL_la_SOURCES = ocl_icd_loader_gen.c ocl_icd.h
+endif
+if USE_MAP_AND_C
 libOpenCL_la_LDFLAGS += -Wl,--version-script,ocl_icd_loader_gen.map
 libOpenCL_la_DEPENDS = ocl_icd_loader_gen.map
+endif
+
+if RUST_LOADER
+# rust/build-loader.sh: cargo builds the crate, its objects are archived into
+# a convenience library, and a version map is derived from the C loader's
+# generated map (filtered to what the crate exports) for the final libtool
+# link. (The USE_MAP block below is skipped: the rust map supersedes it.)
+CLEANFILES += rust/libocl-icd-rs.a rust/rust-loader.map
+EXTRA_DIST += rust/build-loader.sh \
+	rust/scripts/gen_bindings.py rust/scripts/gen_map.py \
+	rust/scripts/archive-objects.py
+
+rust/libocl-icd-rs.a: $(srcdir)/rust/src/exports.rs $(srcdir)/rust/Cargo.toml \
+		$(srcdir)/rust/build.rs ocl_icd_loader_gen.map $(FILES_FROM_DATABASE)
+	$(SHELL) $(srcdir)/rust/build-loader.sh \
+		"$(srcdir)/rust" "$(CARGO)" "$(OCL_ICD_RS_VERSION)"
 endif
 
 ####################################
 # A utility to list loaded layers
 bin_PROGRAMS = cllayerinfo
 
-cllayerinfo_SOURCES = cllayerinfo.c $(libOpenCL_la_SOURCES)
-nodist_cllayerinfo_SOURCES = $(nodist_libOpenCL_la_SOURCES)
+cllayerinfo_SOURCES = cllayerinfo.c ocl_icd_loader.c ocl_icd_loader.h ocl_icd_debug.h
+nodist_cllayerinfo_SOURCES = ocl_icd_loader_gen.c ocl_icd.h
 cllayerinfo_CFLAGS = -DCLLAYERINFO $(libOpenCL_la_CFLAGS)
 cllayerinfo_LDFLAGS = $(PTHREAD_CFLAGS) $(PTHREAD_LIBS)
+# NOTE: cllayerinfo never dispatches to vendors (it only dlopens layers), so it
+# keeps the self-contained C loader even with --enable-rust-loader.
 
 ####################################
 # A very small program test

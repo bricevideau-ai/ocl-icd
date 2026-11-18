@@ -161,6 +161,38 @@ AC_ARG_ENABLE([update-database],
   [update_database=no])
 AM_CONDITIONAL([UPDATE_DATABASE], [test x"$update_database" != xno])
 
+# --enable-rust-loader
+AC_ARG_ENABLE([rust-loader],
+  [AS_HELP_STRING([--enable-rust-loader],
+               [build the Rust port of the loader as libOpenCL instead of the C one])],
+  [rust_loader=$enableval],
+  [rust_loader=no])
+AS_IF([test x"$rust_loader" != xno], [
+  AS_IF([test "x$macos" = xyes], [
+    AC_MSG_WARN([--enable-rust-loader is not supported on MacOSX, ignored])
+    rust_loader=no
+  ], [
+    AC_CHECK_PROG([RUSTC], [rustc], [rustc], [no])
+    AS_IF([test "x$RUSTC" = xno], [
+      AS_IF([test x"$rust_loader" = xyes],
+        [AC_MSG_ERROR([rustc not found but --enable-rust-loader was requested])],
+        [rust_loader=no])], [
+      AC_CHECK_PROG([CARGO], [cargo], [cargo], [no])
+      AS_IF([test "x$CARGO" = xno],
+        [AC_MSG_ERROR([cargo not found but --enable-rust-loader was requested])])
+    ])
+  ])
+])
+AM_CONDITIONAL([RUST_LOADER], [test x"$rust_loader" != xno])
+AS_IF([test x"$rust_loader" != xno], [
+  AC_MSG_NOTICE([building the Rust loader (experimental) as libOpenCL])
+], [
+  AC_MSG_NOTICE([building the C loader])
+])
+# version string embedded by the Rust loader (clGetICDLoaderInfoOCLICD)
+OCL_ICD_RS_VERSION=$PACKAGE_VERSION
+AC_SUBST([OCL_ICD_RS_VERSION])
+
 # --enable-custom-vendordir
 AC_ARG_ENABLE([custom-vendordir],
   [AS_HELP_STRING([--enable-custom-vendordir],
@@ -198,8 +230,10 @@ AS_IF([test x"$OCL_ICD_LAYERDIR" = x"/etc/OpenCL/layers"], [
 # always use versionned symbols (check required for MacOSX)
 if test "x$macos" == xyes ; then
 AM_CONDITIONAL([USE_MAP], [false])
+AM_CONDITIONAL([USE_MAP_AND_C], [false])
 else
 AM_CONDITIONAL([USE_MAP], [true])
+AM_CONDITIONAL([USE_MAP_AND_C], [test x"$rust_loader" = xno])
 fi
 
 AC_CONFIG_FILES([
