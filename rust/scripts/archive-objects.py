@@ -25,12 +25,20 @@ import tempfile
 def main():
     cargo, manifest_dir, out = sys.argv[1], sys.argv[2], sys.argv[3]
     argv_file = tempfile.mktemp(prefix='ocl-icd-rs-link-argv-')
+    rsp_file = tempfile.mktemp(prefix='ocl-icd-rs-link-rsp-')
     wrapper = tempfile.mktemp(prefix='ocl-icd-rs-link-')
     with open(wrapper, 'w') as f:
         f.write(
             '#!/bin/bash\n'
-            'for a in "$@"; do [ "$a" = "-shared" ] && { printf "%%s\\n" "$@" > %s; exit 1; }; done\n'
-            'exec "${CC:-cc}" "$@"\n' % argv_file)
+            'for a in "$@"; do\n'
+            '  [ "$a" = "-shared" ] || continue\n'
+            '  printf "%%s\\n" "$@" > %s\n'
+            '  for b in "$@"; do\n'
+            '    case "$b" in @*) [ -e "$${b#@}" ] && cp "$${b#@}" %s ;; esac\n'
+            '  done\n'
+            '  exit 1\n'
+            'done\n'
+            'exec "${CC:-cc}" "$@"\n' % (argv_file, rsp_file))
     os.chmod(wrapper, 0o755)
     env = dict(os.environ)
     env['RUSTFLAGS'] = (env.get('RUSTFLAGS', '') + ' -C linker=' + wrapper).strip()
@@ -43,12 +51,15 @@ def main():
     args = []
     for l in open(argv_file):
         a = l.rstrip('\n')
-        # rustc may pass inputs through a @response file (newer binutils):
-        # expand it, else the crate's own .o files are never harvested.
-        if a.startswith('@') and os.path.exists(a[1:]):
-            args += [x.strip() for x in open(a[1:]) if x.strip()]
-        else:
-            args.append(a)
+        # rustc may pass inputs through a @response file (newer binutils);
+        # the wrapper snapshotted it (cargo deletes it right after the failing
+        # link). Without this the crate's .o files are never harvested.
+        if a.startswith('@'):
+            src = a[1:] if os.path.exists(a[1:]) else (rsp_file if os.path.exists(rsp_file) else None)
+            if src:
+                args += [x.strip() for x in open(src) if x.strip()]
+            continue
+        args.append(a)
 
     def keep(a):
         return ('/build' not in a and 'build_script' not in a
@@ -58,7 +69,8 @@ def main():
     if not any('ocl_icd_rs' in os.path.basename(a) for a in plain):
         sys.stderr.write('no crate codegen objects among %d harvested inputs '
                          '(+%d rlibs) — refusing to write an archive that '
-                         'would export nothing\n' % (len(plain), len(libs)))
+                         'would export nothing. argv tokens: %r\n'
+                         % (len(plain), len(libs), args[:12]))
         return 1
 
     # rlibs contribute objects too; `ar` can't absorb them, so extract-and-pack
