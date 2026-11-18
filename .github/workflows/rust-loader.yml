@@ -1,5 +1,5 @@
 name: Rust loader
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build-and-check:
@@ -10,6 +10,21 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - run: ./bootstrap
       - run: ./configure --enable-rust-loader --enable-official-khronos-headers
+      - run: make rust/libocl-icd-rs.a || true
+      - name: diagnostics
+        run: |
+          set -x
+          ls -la rust/libocl-icd-rs.a rust/rust-loader.map 2>&1 | cat
+          nm --defined-only rust/libocl-icd-rs.a 2>/dev/null | grep -cE "[TDB] cl[A-Z]" || true
+          gcc -shared -fPIC rust/libocl-icd-rs.a -ldl -Wl,-soname,x.so -o /tmp/lazy.so || true
+          nm -D --defined-only /tmp/lazy.so 2>/dev/null | grep -c " T cl" || true
+          gcc -shared -fPIC -Wl,--whole-archive rust/libocl-icd-rs.a -Wl,--no-whole-archive -ldl -o /tmp/wa.so || true
+          nm -D --defined-only /tmp/wa.so 2>/dev/null | grep -c " T cl" || true
+          rm -f libOpenCL.la .libs/libOpenCL.so*
+          make libOpenCL.la || true
+          nm -D --defined-only .libs/libOpenCL.so.1.0.0 2>/dev/null | grep -c "@@OPENCL" || true
+          ld --version | head -1
+          gcc --version | head -1
       - run: make
       # the upstream testsuite must pass against the Rust loader as well
       - run: make check
