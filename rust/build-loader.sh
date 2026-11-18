@@ -24,8 +24,13 @@ if [ "$(cd "$SRCDIR_RUST" && pwd)" != "$(cd "$BUILDDIR" 2>/dev/null && pwd || ec
   cp -a "$SRCDIR_RUST/scripts/"* "$BUILDDIR/scripts/"
   for f in Cargo.toml build.rs; do cp -a "$SRCDIR_RUST/$f" "$BUILDDIR/$f"; done
 fi
-# regenerate the bindings from the interface database (slot indices never drift)
-python3 "$BUILDDIR/scripts/gen_bindings.py" "$TOP/ocl_interface.yaml"
+# regenerate the bindings from the interface database (slot indices never
+# drift). The YAML comes from the SOURCE tree (it is dist data, never built),
+# passed explicitly because gen_bindings.py's script-relative fallback breaks
+# under VPATH where the scripts live in the build dir.
+YAML="$SRCDIR_RUST/../ocl_interface.yaml"
+[ -f "$YAML" ] || YAML="$TOP/ocl_interface.yaml"
+python3 "$BUILDDIR/scripts/gen_bindings.py" "$YAML"
 
 export OCL_ICD_RS_VERSION="$VERSION"
 unset OCL_ICD_RS_MAP

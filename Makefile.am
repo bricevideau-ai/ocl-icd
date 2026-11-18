@@ -24,6 +24,7 @@ FILES_FROM_DATABASE = ocl_icd.h ocl_icd_loader_gen.h \
 	ocl_icd_loader_gen.map
 BUILT_SOURCES = $(FILES_FROM_DATABASE)
 CLEANFILES = $(FILES_FROM_DATABASE) stamp-generator
+MAINTAINERCLEANFILES =
 
 if UPDATE_DATABASE
 use_system_headers=--system-headers
@@ -72,15 +73,37 @@ if RUST_LOADER
 # generated map (filtered to what the crate exports) for the final libtool
 # link. (The USE_MAP block below is skipped: the rust map supersedes it.)
 CLEANFILES += rust/libocl-icd-rs.a rust/rust-loader.map
-EXTRA_DIST += rust/build-loader.sh \
-	rust/scripts/gen_bindings.py rust/scripts/gen_map.py \
-	rust/scripts/archive-objects.py
+# cargo writes into rust/ (target/, regenerated src files); distcleancheck
+# fails on anything left behind.
+MAINTAINERCLEANFILES += rust/src/slots.rs rust/src/gen_forwarders.rs
+distclean-local::
+	rm -rf rust/target rust/.cargo-home
+	@if test "$(srcdir)" != "."; then \
+	  rm -rf rust;   \
+	fi
 
 rust/libocl-icd-rs.a: $(srcdir)/rust/src/exports.rs $(srcdir)/rust/Cargo.toml \
 		$(srcdir)/rust/build.rs ocl_icd_loader_gen.map $(FILES_FROM_DATABASE)
 	$(SHELL) $(srcdir)/rust/build-loader.sh \
 		"$(srcdir)/rust" "$(CARGO)" "$(OCL_ICD_RS_VERSION)"
 endif
+
+# the crate ships in every tarball (distcheck configures the DIST with the
+# flag while the outer configure is plain) — an EXTRA_DIST guarded by
+# if RUST_LOADER vanishes from the default dist, as distcheck caught.
+EXTRA_DIST += rust/build-loader.sh \
+	rust/Cargo.toml rust/Cargo.lock rust/build.rs \
+	rust/scripts/gen_bindings.py rust/scripts/gen_map.py \
+	rust/scripts/archive-objects.py \
+	rust/src/clib.rs rust/src/debug.rs rust/src/dispatch.rs \
+	rust/src/exports.rs rust/src/lib.rs rust/src/registry.rs \
+	rust/src/types.rs
+
+# gen_forwarders.rs/slots.rs are regenerated from ocl_interface.yaml by the
+# build, so they are pruned from the tarball to keep the dist drift-proof;
+# the committed copies only serve plain-git development builds.
+dist-hook::
+	rm -f $(distdir)/rust/src/gen_forwarders.rs $(distdir)/rust/src/slots.rs
 
 ####################################
 # A utility to list loaded layers
