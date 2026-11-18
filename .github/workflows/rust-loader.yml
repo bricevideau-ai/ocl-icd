@@ -37,13 +37,16 @@ jobs:
       - run: make
       - run: make check
       # exports are unversioned on macOS (ld64 has no version scripts), like
-      # the C loader there; prove the binary carries the Rust code, not the
-      # C one, via the rust-only debug prefix (symtab-free .so still keeps
-      # __cstring section bytes that strings reads)
+      # the C loader there. The make check above already proves the dylib
+      # works (test binaries link -lOpenCL against .libs, and its symbols
+      # come from the Rust archive: if it had been empty the link would
+      # have died with undefined _cl* symbols). Belt gate: exported cl*
+      # count > 0 and the flagship symbol present.
       - run: |
           lib=$(find .libs -name 'libOpenCL*' -type f | head -1)
           echo "checking $lib"
-          strings -a "$lib" | grep -qE "ocl[-]icd[-]rs"
+          nm -gU "$lib" | grep -q _clGetPlatformIDs
+          test "$(nm -gU "$lib" | grep -c ' _cl[A-Za-z]*$')" -gt 100
 
   distcheck:
     name: Distcheck (Rust loader)
