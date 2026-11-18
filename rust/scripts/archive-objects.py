@@ -62,8 +62,13 @@ def main():
         args.append(a)
 
     def keep(a):
-        return ('/build' not in a and 'build_script' not in a
-                and not re.search(r'rustc[A-Za-z0-9]+/symbols\.o$', a))
+        # filter by BASENAME only: newer rustc places the cdylib's own cgus
+        # under target/release/build/<pkg>-<hash>/out/, and a path-substring
+        # '/build' test silently discards exactly the objects we need.
+        b = os.path.basename(a)
+        return ('build_script' not in b
+                and not re.search(r'rustc[A-Za-z0-9]+/symbols\.o$', a)
+                and not (b == 'symbols.o' and '/out/' not in a))
     plain = [a for a in args if a.endswith('.o') and keep(a)]
     libs = [a for a in args if a.endswith(('.rlib', '.a')) and keep(a)]
     if not any('ocl_icd_rs' in os.path.basename(a) for a in plain):
