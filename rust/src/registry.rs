@@ -33,7 +33,10 @@ pub struct VendorIcd {
     pub dl_handle: *mut c_void,
     /// clGetExtensionFunctionAddress (dlsym'd from the ICD).
     pub ext_fn_ptr: Option<ExtFnAddr>,
-    pub num_platforms: cl_uint,
+    /// Unloadable platforms still attributed to this vendor (`num_platforms`
+    /// in C). Cell: only mutated during deinit, which is single-threaded
+    /// behind the DEINITING latch (same discipline as C's plain --).
+    pub num_platforms: core::cell::Cell<cl_uint>,
 }
 
 pub struct PlatformIcd {
@@ -529,7 +532,7 @@ unsafe fn find_and_check_platforms(handles: Vec<*mut c_void>) -> (Vec<VendorIcd>
                 path: String::new(),
                 dl_handle: dlh,
                 ext_fn_ptr: ext,
-                num_platforms: valid,
+                num_platforms: core::cell::Cell::new(valid),
             });
         } else {
             crate::clib::dlclose(dlh);

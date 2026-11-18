@@ -614,13 +614,36 @@ pub unsafe fn deinit_compound_body() -> cl_int {
                 crate::clib::dlclose(layer.dl_handle);
             }
         }
-        // ICDs: one dlclose per platform that was marked unloadable — vendors
-        // whose last unloadable platform goes down reach refcount 0 and are
-        // genuinely unmapped (dlclose is refcounted; our own base ref from
-        // dlopen keeps the rest alive, matching the C bookkeeping).
+        // ICDs: C bookkeeping exactly (ocl_icd_loader.c:1524-1543).
+        // Pass 1 (C loop over _picds): free per-platform state; for each
+        // UNLOADABLE platform decrement its vendor's remaining-platform
+        // count. The decrement runs whether or not unloading is disabled
+        // (C: `_icds[...].num_platforms--` sits outside the flag) — only the
+        // dlclose is conditional.
         for p in &reg.platforms {
-            if p.unloadable != CL_FALSE && !disable_unload {
-                crate::clib::dlclose(reg.vendors[p.vendor_idx].dl_handle);
+            if p.unloadable != CL_FALSE {
+                let v = &reg.vendors[p.vendor_idx];
+                v.num_platforms.set(v.num_platforms.get().saturating_sub(1));
+            }
+        }
+        // Pass 2 (C loop over _icds, i.e. LOAD/registration order, NOT the
+        // sorted platform list): a vendor is closed exactly when its count
+        // reaches 0, i.e. once all its unloadable platforms are gone, and the
+        // close order therefore cannot be influenced by platform sorting.
+        // dlclose symmetry: one close per unloaded platform -> the vendor
+        // handle's refcount hits 0 only when its last user is gone.
+        // Close order is the REVERSE of load order (stack-symmetric with the
+        // dlopen sequence, mirroring the layers' .rev()). Iterating the
+        // vendors vector — not the sorted platform list — keeps platform
+        // sorting out of it. NB: deliberate divergence from C, whose second
+        // loop walks _icds forward (same closes, opposite order).
+        if !disable_unload {
+            for (i, v) in reg.vendors.iter().rev().enumerate() {
+                debug!(D_LOG, "XTRACE close-slot {} handle={:?} count={}", i, v.dl_handle, v.num_platforms.get());
+                
+                if v.num_platforms.get() == 0 {
+                    crate::clib::dlclose(v.dl_handle);
+                }
             }
         }
         // C: free(_picds[i].extension_suffix/disp_data), free(_picds),
