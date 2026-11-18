@@ -35,9 +35,13 @@ for c in "$TOP/ocl_interface.yaml" "$(dirname "$SRCDIR_RUST")/ocl_interface.yaml
   [ -f "$c" ] && YAML="$c" && break
 done
 [ -f "$YAML" ] || { echo "build-loader: cannot locate ocl_interface.yaml" >&2; exit 1; }
+YAML="$(cd "$(dirname "$YAML")" && pwd)/ocl_interface.yaml"
 GENRB="$TOP/icd_generator.rb"
 [ -f "$GENRB" ] || GENRB="$(dirname "$YAML")/icd_generator.rb"
 [ -f "$GENRB" ] || { echo "build-loader: cannot locate icd_generator.rb" >&2; exit 1; }
+# absolutize: the script cd's into $BUILDDIR before invoking ruby, and a
+# relative path would resolve against the wrong tree under VPATH/distcheck
+GENRB="$(cd "$(dirname "$GENRB")" && pwd)/icd_generator.rb"
 ruby "$GENRB" --mode rust-generate --database "$YAML" \
   --rust-slots "$BUILDDIR/src/slots.rs" --rust-gen "$BUILDDIR/src/gen_forwarders.rs"
 
@@ -47,7 +51,7 @@ cd "$BUILDDIR"
 # 1. unversioned cdylib (source of truth for which symbols exist)
 "$CARGO" build --release
 # 2. version map, filtered against the cdylib export list
-python3 scripts/gen_map.py "$TOP/ocl_icd_loader_gen.map" \
-	"target/release/libocl_icd_rs.so" rust-loader.map
+ruby "$GENRB" --mode rust-map --c-map "$TOP/ocl_icd_loader_gen.map" \
+  --cdylib target/release/libocl_icd_rs.so --out rust-loader.map
 # 3. static archive of the crate objects for libtool
-python3 scripts/archive-objects.py "$CARGO" . libocl-icd-rs.a
+ruby "$GENRB" --mode rust-archive --cargo "$CARGO" --manifest-dir . --out libocl-icd-rs.a

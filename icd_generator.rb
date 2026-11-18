@@ -1009,6 +1009,103 @@ EOF
 
   ##########################################################
   ##########################################################
+  # rust-map mode
+  # Linker version script for the Rust loader, derived from the C loader's
+  # generated map: same symbol -> OPENCL_x.y node assignment (the ABI
+  # contract), minus symbols the Rust build does not export. Port of
+  # rust/scripts/gen_map.py. Usage: --mode rust-map --c-map M --cdylib S
+  # --out O.
+  def self.generate_rust_map(cmap, so, out)
+    src = File.read(cmap).gsub(%r{/\*[\s\S]*?\*/}, '')
+    blocks = src.scan(/(OPENCL_[\d.]+)\s*\{([\s\S]*?)\}\s*(?:OPENCL_[\d.]+)?\s*;/)
+    defined = {}
+    ok = IO.popen(['nm', '-D', '--defined-only', so]) { |io| io.read }
+    raise 'nm failed' unless $?.success?
+    ok.split("\n").each { |line|
+      parts = line.split
+      defined[parts[-1].split('@')[0]] = true if parts.length >= 3
+    }
+    nodes = []
+    prev = nil
+    blocks.each { |name, body|
+      syms = body.scan(/(cl\w+)\s*;/).flatten.uniq.select { |s| defined.key?(s) }.sort
+      next if syms.empty?
+      tail = prev ? "} #{prev};" : "  local:\n    *;\n};"
+      nodes << "#{name} {\n  global:\n" + syms.map { |s| "    #{s};\n" }.join + tail
+      prev = name
+    }
+    File.write(out, nodes.join("\n\n") + "\n")
+    total = nodes.sum { |b| b.count(';') }
+    warn format('%d symbols in %d version nodes', total, nodes.length)
+  end
+
+  ##########################################################
+  ##########################################################
+  # rust-archive mode
+  # Static convenience archive of the crate's objects for libtool, harvested
+  # through a capturing pseudo-linker. Port of rust/scripts/archive-objects.py
+  # (same fail-loud guards). Usage: --mode rust-archive [--cargo C]
+  # [--manifest-dir D] --out A.
+  def self.archive_rust_objects(cargo, manifest_dir, out)
+    require 'tmpdir'
+    manifest_dir = File.expand_path(manifest_dir)
+    tag = "#{$$}-#{Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)}"
+    argv_file = File.join(Dir.tmpdir, "ocl-icd-rs-link-argv-#{tag}")
+    rsp_file  = File.join(Dir.tmpdir, "ocl-icd-rs-link-rsp-#{tag}")
+    wrapper   = File.join(Dir.tmpdir, "ocl-icd-rs-link-#{tag}")
+    File.write(wrapper, format(
+      "#!/bin/bash\nfor a in \"$@\"; do\n  [ \"$a\" = \"-shared\" ] || continue\n  printf \"%%s\\n\" \"$@\" > %s\n  for b in \"$@\"; do\n    case \"$b\" in @*) [ -e \"$${b#@}\" ] && cp \"$${b#@}\" %s ;; esac\n  done\n  exit 1\ndone\nexec \"${CC:-cc}\" \"$@\"\n",
+      argv_file, rsp_file))
+    File.chmod(0o755, wrapper)
+    old_rustflags = ENV['RUSTFLAGS']
+    ENV['RUSTFLAGS'] = ((old_rustflags || '') + ' -C linker=' + wrapper).strip
+    log = ''
+    Dir.chdir(manifest_dir) do
+      log = IO.popen([cargo, 'build', '--release'], err: [:child, :out], &:read) || ''
+    end
+  ensure
+    ENV['RUSTFLAGS'] = old_rustflags
+    abort "linker wrapper never invoked for a -shared link:\n#{log[-500..]}\n" unless File.exist?(argv_file)
+    args = []
+    File.foreach(argv_file) { |l|
+      a = l.chomp
+      if a.start_with?('@')
+        src = a[1..]
+        src = File.exist?(src) ? src : (File.exist?(rsp_file) ? rsp_file : nil)
+        File.foreach(src) { |x| args << x.strip unless x.strip.empty? } if src
+        next
+      end
+      args << a
+    }
+    keep = lambda { |a|
+      b = File.basename(a)
+      return false if b.include?('build_script')
+      return false if a =~ /rustc[A-Za-z0-9]+\/symbols\.o$/
+      return false if b == 'symbols.o' && !a.include?('/out/')
+      true
+    }
+    plain = args.select { |a| a.end_with?('.o') && keep.call(a) }
+    libs  = args.select { |a| (a.end_with?('.rlib') || a.end_with?('.a')) && keep.call(a) }
+    unless plain.any? { |a| File.basename(a).include?('ocl_icd_rs') }
+      abort format('no crate codegen objects among %d harvested inputs (+%d rlibs) — refusing to write an archive that would export nothing. argv tokens: %p', plain.length, libs.length, args[0, 12])
+    end
+    final = plain.dup
+    Dir::mktmpdir('ocl-icd-rs-obj-') { |tmp|
+      libs.each_with_index { |o, i|
+        d = File.join(tmp, "m#{i}")
+        Dir.mkdir(d)
+        Dir.chdir(d) { system('ar', 'x', o, out: File::NULL, err: File::NULL) or abort "ar x #{o} failed" }
+        Dir.children(d).select { |x| x.end_with?('.o') }.sort.each { |x| final << File.join(d, x) }
+      }
+      File.unlink(out) if File.exist?(out)
+      system('ar', 'qc', out, *final) or abort 'ar qc failed'
+    }
+    system('ranlib', out) or abort 'ranlib failed'
+    warn format('archived %d objects (%d crate + %d from %d rlibs) -> %s', final.length, plain.length, final.length - plain.length, libs.length, out)
+  end
+
+  ##########################################################
+  ##########################################################
   # rust-generate mode
   # Rust counterpart of the entry-point subset of generate_from_database:
   # emits rust/src/slots.rs and rust/src/gen_forwarders.rs straight from the
@@ -1532,14 +1629,19 @@ OptionParser.new do |opts|
   do |v|
     options[:"system-headers"] = v
   end
+  opts.on("--c-map FILE", String, "C version map input (rust-map)") { |v| options[:"c-map"] = v }
+  opts.on("--cdylib FILE", String, "cdylib to inspect for defined symbols (rust-map)") { |v| options[:"cdylib"] = v }
+  opts.on("--manifest-dir DIR", String, "cargo manifest directory (rust-archive)") { |v| options[:"manifest-dir"] = v }
+  opts.on("--out FILE", String, "output path (rust-map / rust-archive)") { |v| options[:out] = v }
+  opts.on("--cargo CMD", String, "cargo command (rust-archive)") { |v| options[:cargo] = v }
   opts.on("--rust-slots FILE", String, "slots.rs output path (rust-generate)") do |v|
     options[:"rust-slots"] = v
   end
   opts.on("--rust-gen FILE", String, "gen_forwarders.rs output path (rust-generate)") do |v|
     options[:"rust-gen"] = v
   end
-  opts.on("-m", "--mode [MODE]", [:database, :generate, :"update-database", :"rust-generate"],
-          "Select mode (database, generate, update-database, rust-generate)") do |m|
+  opts.on("-m", "--mode [MODE]", [:database, :generate, :"update-database", :"rust-generate", :"rust-map", :"rust-archive"],
+          "Select mode (database, generate, update-database, rust-generate, rust-map, rust-archive)") do |m|
     options[:mode] = m
   end
 end.parse!
@@ -1557,6 +1659,11 @@ if options[:mode] == :generate then
   else
     IcdGenerator.generate_sources(from_headers=true, from_database=false)
   end
+elsif options[:mode] == :"rust-map" then
+  IcdGenerator.generate_rust_map(options[:"c-map"], options[:cdylib], options[:out])
+elsif options[:mode] == :"rust-archive" then
+  IcdGenerator.archive_rust_objects(options[:cargo] || "cargo",
+    options[:"manifest-dir"] || ".", options[:out] || "libocl-icd-rs.a")
 elsif options[:mode] == :"rust-generate" then
   IcdGenerator.generate_rust_bindings(options[:database],
     options[:"rust-slots"] || "rust/src/slots.rs",

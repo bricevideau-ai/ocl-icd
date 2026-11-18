@@ -93,8 +93,7 @@ endif
 # if RUST_LOADER vanishes from the default dist, as distcheck caught.
 EXTRA_DIST += rust/build-loader.sh \
 	rust/Cargo.toml rust/Cargo.lock rust/build.rs \
-	rust/scripts/gen_bindings.py rust/scripts/gen_map.py \
-	rust/scripts/archive-objects.py \
+		rust/scripts/gen_bindings.py \
 	rust/src/clib.rs rust/src/debug.rs rust/src/dispatch.rs \
 	rust/src/exports.rs rust/src/gen_forwarders.rs rust/src/lib.rs \
 	rust/src/registry.rs rust/src/slots.rs rust/src/types.rs
