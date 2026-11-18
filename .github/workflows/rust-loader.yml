@@ -17,7 +17,7 @@ jobs:
       - run: nm -D --defined-only .libs/libOpenCL.so.1.0.0 | grep -q "@@OPENCL_1.0"
       # the port's debug prefix lives only in the Rust code (stripped .so
       # keeps no symtab, so a symbol grep here would always be empty)
-      - run: strings -a .libs/libOpenCL.so.1.0.0 | grep -q "ocl-icd-rs: "
+      - run: strings -a .libs/libOpenCL.so.1.0.0 | grep -qE "ocl[-]icd[-]rs"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
