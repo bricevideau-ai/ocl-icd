@@ -32,6 +32,9 @@ pub fn marshal_arg<T>(x: &T) -> usize {
 #[macro_export]
 macro_rules! gen_entry {
     ($name:ident, $slot:expr, $rt:ty, ($($argn:ident : $argt:ty),*), [$($padn:ident),*], $body:path) => {
+        const _: () = assert!(
+            $crate::dispatch::slot_of(stringify!($name)) == $slot,
+            "gen_entry: slot argument disagrees with DISPATCH_SLOT_NAMES");
         #[no_mangle]
         pub extern "C" fn $name($($argn: $argt),* $(, $padn: usize)*) -> $rt {
             $crate::debug::dbg($crate::debug::D_TRACE, format_args!("-> {}", stringify!($name)));
@@ -70,6 +73,9 @@ macro_rules! gen_entry {
 /// `gen_entry!` with the same semantics for the generated set.
 macro_rules! entry {
     ($name:ident, $slot:expr, $rt:ty, ($($argn:ident : $argt:ty),*), [$($padn:ident),*], $body:path) => {
+        const _: () = assert!(
+            $crate::dispatch::slot_of(stringify!($name)) == $slot,
+            "entry: slot argument disagrees with DISPATCH_SLOT_NAMES");
         #[no_mangle]
         pub extern "C" fn $name($($argn: $argt),* $(, $padn: usize)*) -> $rt {
             $crate::debug::dbg($crate::debug::D_TRACE, format_args!("-> {}", stringify!($name)));

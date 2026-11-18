@@ -89,3 +89,33 @@ pub unsafe fn has_icd2_tag(obj: *mut c_void) -> bool {
     let table = (obj as *const ObjectHeader).read().dispatch;
     !table.is_null() && (*table as isize) == CL_ICD2_TAG_KHR
 }
+
+/// Index of `name` in the generated DISPATCH_SLOT_NAMES table; usize::MAX when
+/// absent. Compile-time usable — the entry macros assert their slot argument
+/// against it, so a slot that ever drifts from the function name fails the
+/// build instead of segfaulting inside a vendor driver.
+pub const fn slot_of(name: &str) -> usize {
+    let mut i = 0;
+    while i < NUM_DISPATCH_SLOTS {
+        if str_eq(DISPATCH_SLOT_NAMES[i], name) {
+            return i;
+        }
+        i += 1;
+    }
+    usize::MAX
+}
+
+const fn str_eq(a: &str, b: &str) -> bool {
+    let (a, b) = (a.as_bytes(), b.as_bytes());
+    if a.len() != b.len() {
+        return false;
+    }
+    let mut i = 0;
+    while i < a.len() {
+        if a[i] != b[i] {
+            return false;
+        }
+        i += 1;
+    }
+    true
+}

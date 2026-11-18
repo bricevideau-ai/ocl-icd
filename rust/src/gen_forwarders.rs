@@ -35,9 +35,9 @@ pub unsafe extern "C" fn clGetDeviceIDs_disp(platform: cl_platform_id, device_ty
         return CL_INVALID_PLATFORM;
         }
     };
-    call_by_slot(t, 2, &[platform as usize, val(&device_type), num_entries as usize, devices as usize, num_devices as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetDeviceIDs"), &[platform as usize, val(&device_type), num_entries as usize, devices as usize, num_devices as usize]) as cl_int
 }
-gen_entry!(clGetDeviceIDs, 2, cl_int, (platform: cl_platform_id, device_type: cl_device_type, num_entries: cl_uint, devices: *mut cl_device_id, num_devices: *mut cl_uint), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetDeviceIDs_disp);
+gen_entry!(clGetDeviceIDs, crate::dispatch::slot_of("clGetDeviceIDs"), cl_int, (platform: cl_platform_id, device_type: cl_device_type, num_entries: cl_uint, devices: *mut cl_device_id, num_devices: *mut cl_uint), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetDeviceIDs_disp);
 
 // ── slot 3: clGetDeviceInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -46,9 +46,9 @@ pub unsafe extern "C" fn clGetDeviceInfo_disp(device: cl_device_id, param_name: 
     return CL_INVALID_DEVICE;
     }
     let t = object_dispatch(device);
-    call_by_slot(t, 3, &[device as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetDeviceInfo"), &[device as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
 }
-gen_entry!(clGetDeviceInfo, 3, cl_int, (device: cl_device_id, param_name: cl_device_info, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetDeviceInfo_disp);
+gen_entry!(clGetDeviceInfo, crate::dispatch::slot_of("clGetDeviceInfo"), cl_int, (device: cl_device_id, param_name: cl_device_info, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetDeviceInfo_disp);
 
 // ── slot 6: clRetainContext ──
 #[allow(clippy::too_many_arguments)]
@@ -57,9 +57,9 @@ pub unsafe extern "C" fn clRetainContext_disp(context: cl_context) -> cl_int {
     return CL_INVALID_CONTEXT;
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 6, &[context as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clRetainContext"), &[context as usize]) as cl_int
 }
-gen_entry!(clRetainContext, 6, cl_int, (context: cl_context), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainContext_disp);
+gen_entry!(clRetainContext, crate::dispatch::slot_of("clRetainContext"), cl_int, (context: cl_context), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainContext_disp);
 
 // ── slot 7: clReleaseContext ──
 #[allow(clippy::too_many_arguments)]
@@ -68,9 +68,9 @@ pub unsafe extern "C" fn clReleaseContext_disp(context: cl_context) -> cl_int {
     return CL_INVALID_CONTEXT;
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 7, &[context as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clReleaseContext"), &[context as usize]) as cl_int
 }
-gen_entry!(clReleaseContext, 7, cl_int, (context: cl_context), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseContext_disp);
+gen_entry!(clReleaseContext, crate::dispatch::slot_of("clReleaseContext"), cl_int, (context: cl_context), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseContext_disp);
 
 // ── slot 8: clGetContextInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -79,9 +79,9 @@ pub unsafe extern "C" fn clGetContextInfo_disp(context: cl_context, param_name: 
     return CL_INVALID_CONTEXT;
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 8, &[context as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetContextInfo"), &[context as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
 }
-gen_entry!(clGetContextInfo, 8, cl_int, (context: cl_context, param_name: cl_context_info, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetContextInfo_disp);
+gen_entry!(clGetContextInfo, crate::dispatch::slot_of("clGetContextInfo"), cl_int, (context: cl_context, param_name: cl_context_info, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetContextInfo_disp);
 
 // ── slot 9: clCreateCommandQueue ──
 #[allow(clippy::too_many_arguments)]
@@ -91,9 +91,9 @@ pub unsafe extern "C" fn clCreateCommandQueue_disp(context: cl_context, device: 
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 9, &[context as usize, device as usize, val(&properties), errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateCommandQueue"), &[context as usize, device as usize, val(&properties), errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateCommandQueue, 9, *mut c_void, (context: cl_context, device: cl_device_id, properties: u64, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateCommandQueue_disp);
+gen_entry!(clCreateCommandQueue, crate::dispatch::slot_of("clCreateCommandQueue"), *mut c_void, (context: cl_context, device: cl_device_id, properties: u64, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateCommandQueue_disp);
 
 // ── slot 10: clRetainCommandQueue ──
 #[allow(clippy::too_many_arguments)]
@@ -102,9 +102,9 @@ pub unsafe extern "C" fn clRetainCommandQueue_disp(command_queue: cl_command_que
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 10, &[command_queue as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clRetainCommandQueue"), &[command_queue as usize]) as cl_int
 }
-gen_entry!(clRetainCommandQueue, 10, cl_int, (command_queue: cl_command_queue), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainCommandQueue_disp);
+gen_entry!(clRetainCommandQueue, crate::dispatch::slot_of("clRetainCommandQueue"), cl_int, (command_queue: cl_command_queue), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainCommandQueue_disp);
 
 // ── slot 11: clReleaseCommandQueue ──
 #[allow(clippy::too_many_arguments)]
@@ -113,9 +113,9 @@ pub unsafe extern "C" fn clReleaseCommandQueue_disp(command_queue: cl_command_qu
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 11, &[command_queue as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clReleaseCommandQueue"), &[command_queue as usize]) as cl_int
 }
-gen_entry!(clReleaseCommandQueue, 11, cl_int, (command_queue: cl_command_queue), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseCommandQueue_disp);
+gen_entry!(clReleaseCommandQueue, crate::dispatch::slot_of("clReleaseCommandQueue"), cl_int, (command_queue: cl_command_queue), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseCommandQueue_disp);
 
 // ── slot 12: clGetCommandQueueInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -124,9 +124,9 @@ pub unsafe extern "C" fn clGetCommandQueueInfo_disp(command_queue: cl_command_qu
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 12, &[command_queue as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetCommandQueueInfo"), &[command_queue as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
 }
-gen_entry!(clGetCommandQueueInfo, 12, cl_int, (command_queue: cl_command_queue, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetCommandQueueInfo_disp);
+gen_entry!(clGetCommandQueueInfo, crate::dispatch::slot_of("clGetCommandQueueInfo"), cl_int, (command_queue: cl_command_queue, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetCommandQueueInfo_disp);
 
 // ── slot 13: clSetCommandQueueProperty ──
 #[allow(clippy::too_many_arguments)]
@@ -135,9 +135,9 @@ pub unsafe extern "C" fn clSetCommandQueueProperty_disp(command_queue: cl_comman
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 13, &[command_queue as usize, val(&properties), enable as usize, old_properties as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clSetCommandQueueProperty"), &[command_queue as usize, val(&properties), enable as usize, old_properties as usize]) as cl_int
 }
-gen_entry!(clSetCommandQueueProperty, 13, cl_int, (command_queue: cl_command_queue, properties: u64, enable: cl_bool, old_properties: *mut u64), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clSetCommandQueueProperty_disp);
+gen_entry!(clSetCommandQueueProperty, crate::dispatch::slot_of("clSetCommandQueueProperty"), cl_int, (command_queue: cl_command_queue, properties: u64, enable: cl_bool, old_properties: *mut u64), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clSetCommandQueueProperty_disp);
 
 // ── slot 14: clCreateBuffer ──
 #[allow(clippy::too_many_arguments)]
@@ -147,9 +147,9 @@ pub unsafe extern "C" fn clCreateBuffer_disp(context: cl_context, flags: u64, si
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 14, &[context as usize, val(&flags), size as usize, host_ptr as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateBuffer"), &[context as usize, val(&flags), size as usize, host_ptr as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateBuffer, 14, *mut c_void, (context: cl_context, flags: u64, size: usize, host_ptr: *mut c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateBuffer_disp);
+gen_entry!(clCreateBuffer, crate::dispatch::slot_of("clCreateBuffer"), *mut c_void, (context: cl_context, flags: u64, size: usize, host_ptr: *mut c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateBuffer_disp);
 
 // ── slot 15: clCreateImage2D ──
 #[allow(clippy::too_many_arguments)]
@@ -159,9 +159,9 @@ pub unsafe extern "C" fn clCreateImage2D_disp(context: cl_context, flags: u64, i
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 15, &[context as usize, val(&flags), image_format as usize, image_width as usize, image_height as usize, image_row_pitch as usize, host_ptr as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateImage2D"), &[context as usize, val(&flags), image_format as usize, image_width as usize, image_height as usize, image_row_pitch as usize, host_ptr as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateImage2D, 15, *mut c_void, (context: cl_context, flags: u64, image_format: *const c_void, image_width: usize, image_height: usize, image_row_pitch: usize, host_ptr: *mut c_void, errcode_ret: *mut cl_int), [__pad0,__pad1], clCreateImage2D_disp);
+gen_entry!(clCreateImage2D, crate::dispatch::slot_of("clCreateImage2D"), *mut c_void, (context: cl_context, flags: u64, image_format: *const c_void, image_width: usize, image_height: usize, image_row_pitch: usize, host_ptr: *mut c_void, errcode_ret: *mut cl_int), [__pad0,__pad1], clCreateImage2D_disp);
 
 // ── slot 16: clCreateImage3D ──
 #[allow(clippy::too_many_arguments)]
@@ -171,9 +171,9 @@ pub unsafe extern "C" fn clCreateImage3D_disp(context: cl_context, flags: u64, i
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 16, &[context as usize, val(&flags), image_format as usize, image_width as usize, image_height as usize, image_depth as usize, image_row_pitch as usize, image_slice_pitch as usize, host_ptr as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateImage3D"), &[context as usize, val(&flags), image_format as usize, image_width as usize, image_height as usize, image_depth as usize, image_row_pitch as usize, image_slice_pitch as usize, host_ptr as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateImage3D, 16, *mut c_void, (context: cl_context, flags: u64, image_format: *const c_void, image_width: usize, image_height: usize, image_depth: usize, image_row_pitch: usize, image_slice_pitch: usize, host_ptr: *mut c_void, errcode_ret: *mut cl_int), [], clCreateImage3D_disp);
+gen_entry!(clCreateImage3D, crate::dispatch::slot_of("clCreateImage3D"), *mut c_void, (context: cl_context, flags: u64, image_format: *const c_void, image_width: usize, image_height: usize, image_depth: usize, image_row_pitch: usize, image_slice_pitch: usize, host_ptr: *mut c_void, errcode_ret: *mut cl_int), [], clCreateImage3D_disp);
 
 // ── slot 17: clRetainMemObject ──
 #[allow(clippy::too_many_arguments)]
@@ -182,9 +182,9 @@ pub unsafe extern "C" fn clRetainMemObject_disp(memobj: cl_mem) -> cl_int {
     return CL_INVALID_MEM_OBJECT;
     }
     let t = object_dispatch(memobj);
-    call_by_slot(t, 17, &[memobj as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clRetainMemObject"), &[memobj as usize]) as cl_int
 }
-gen_entry!(clRetainMemObject, 17, cl_int, (memobj: cl_mem), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainMemObject_disp);
+gen_entry!(clRetainMemObject, crate::dispatch::slot_of("clRetainMemObject"), cl_int, (memobj: cl_mem), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainMemObject_disp);
 
 // ── slot 18: clReleaseMemObject ──
 #[allow(clippy::too_many_arguments)]
@@ -193,9 +193,9 @@ pub unsafe extern "C" fn clReleaseMemObject_disp(memobj: cl_mem) -> cl_int {
     return CL_INVALID_MEM_OBJECT;
     }
     let t = object_dispatch(memobj);
-    call_by_slot(t, 18, &[memobj as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clReleaseMemObject"), &[memobj as usize]) as cl_int
 }
-gen_entry!(clReleaseMemObject, 18, cl_int, (memobj: cl_mem), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseMemObject_disp);
+gen_entry!(clReleaseMemObject, crate::dispatch::slot_of("clReleaseMemObject"), cl_int, (memobj: cl_mem), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseMemObject_disp);
 
 // ── slot 19: clGetSupportedImageFormats ──
 #[allow(clippy::too_many_arguments)]
@@ -204,9 +204,9 @@ pub unsafe extern "C" fn clGetSupportedImageFormats_disp(context: cl_context, fl
     return CL_INVALID_CONTEXT;
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 19, &[context as usize, val(&flags), image_type as usize, num_entries as usize, image_formats as usize, num_image_formats as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetSupportedImageFormats"), &[context as usize, val(&flags), image_type as usize, num_entries as usize, image_formats as usize, num_image_formats as usize]) as cl_int
 }
-gen_entry!(clGetSupportedImageFormats, 19, cl_int, (context: cl_context, flags: u64, image_type: u32, num_entries: cl_uint, image_formats: *mut c_void, num_image_formats: *mut cl_uint), [__pad0,__pad1,__pad2,__pad3], clGetSupportedImageFormats_disp);
+gen_entry!(clGetSupportedImageFormats, crate::dispatch::slot_of("clGetSupportedImageFormats"), cl_int, (context: cl_context, flags: u64, image_type: u32, num_entries: cl_uint, image_formats: *mut c_void, num_image_formats: *mut cl_uint), [__pad0,__pad1,__pad2,__pad3], clGetSupportedImageFormats_disp);
 
 // ── slot 20: clGetMemObjectInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -215,9 +215,9 @@ pub unsafe extern "C" fn clGetMemObjectInfo_disp(memobj: cl_mem, param_name: usi
     return CL_INVALID_MEM_OBJECT;
     }
     let t = object_dispatch(memobj);
-    call_by_slot(t, 20, &[memobj as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetMemObjectInfo"), &[memobj as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
 }
-gen_entry!(clGetMemObjectInfo, 20, cl_int, (memobj: cl_mem, param_name: usize, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetMemObjectInfo_disp);
+gen_entry!(clGetMemObjectInfo, crate::dispatch::slot_of("clGetMemObjectInfo"), cl_int, (memobj: cl_mem, param_name: usize, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetMemObjectInfo_disp);
 
 // ── slot 21: clGetImageInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -226,9 +226,9 @@ pub unsafe extern "C" fn clGetImageInfo_disp(image: cl_mem, param_name: u32, par
     return CL_INVALID_MEM_OBJECT;
     }
     let t = object_dispatch(image);
-    call_by_slot(t, 21, &[image as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetImageInfo"), &[image as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
 }
-gen_entry!(clGetImageInfo, 21, cl_int, (image: cl_mem, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetImageInfo_disp);
+gen_entry!(clGetImageInfo, crate::dispatch::slot_of("clGetImageInfo"), cl_int, (image: cl_mem, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetImageInfo_disp);
 
 // ── slot 22: clCreateSampler ──
 #[allow(clippy::too_many_arguments)]
@@ -238,9 +238,9 @@ pub unsafe extern "C" fn clCreateSampler_disp(context: cl_context, normalized_co
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 22, &[context as usize, normalized_coords as usize, addressing_mode as usize, filter_mode as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateSampler"), &[context as usize, normalized_coords as usize, addressing_mode as usize, filter_mode as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateSampler, 22, *mut c_void, (context: cl_context, normalized_coords: cl_bool, addressing_mode: u32, filter_mode: u32, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateSampler_disp);
+gen_entry!(clCreateSampler, crate::dispatch::slot_of("clCreateSampler"), *mut c_void, (context: cl_context, normalized_coords: cl_bool, addressing_mode: u32, filter_mode: u32, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateSampler_disp);
 
 // ── slot 23: clRetainSampler ──
 #[allow(clippy::too_many_arguments)]
@@ -249,9 +249,9 @@ pub unsafe extern "C" fn clRetainSampler_disp(sampler: cl_sampler) -> cl_int {
     return CL_INVALID_SAMPLER;
     }
     let t = object_dispatch(sampler);
-    call_by_slot(t, 23, &[sampler as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clRetainSampler"), &[sampler as usize]) as cl_int
 }
-gen_entry!(clRetainSampler, 23, cl_int, (sampler: cl_sampler), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainSampler_disp);
+gen_entry!(clRetainSampler, crate::dispatch::slot_of("clRetainSampler"), cl_int, (sampler: cl_sampler), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainSampler_disp);
 
 // ── slot 24: clReleaseSampler ──
 #[allow(clippy::too_many_arguments)]
@@ -260,9 +260,9 @@ pub unsafe extern "C" fn clReleaseSampler_disp(sampler: cl_sampler) -> cl_int {
     return CL_INVALID_SAMPLER;
     }
     let t = object_dispatch(sampler);
-    call_by_slot(t, 24, &[sampler as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clReleaseSampler"), &[sampler as usize]) as cl_int
 }
-gen_entry!(clReleaseSampler, 24, cl_int, (sampler: cl_sampler), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseSampler_disp);
+gen_entry!(clReleaseSampler, crate::dispatch::slot_of("clReleaseSampler"), cl_int, (sampler: cl_sampler), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseSampler_disp);
 
 // ── slot 25: clGetSamplerInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -271,9 +271,9 @@ pub unsafe extern "C" fn clGetSamplerInfo_disp(sampler: cl_sampler, param_name: 
     return CL_INVALID_SAMPLER;
     }
     let t = object_dispatch(sampler);
-    call_by_slot(t, 25, &[sampler as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetSamplerInfo"), &[sampler as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
 }
-gen_entry!(clGetSamplerInfo, 25, cl_int, (sampler: cl_sampler, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetSamplerInfo_disp);
+gen_entry!(clGetSamplerInfo, crate::dispatch::slot_of("clGetSamplerInfo"), cl_int, (sampler: cl_sampler, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetSamplerInfo_disp);
 
 // ── slot 26: clCreateProgramWithSource ──
 #[allow(clippy::too_many_arguments)]
@@ -283,9 +283,9 @@ pub unsafe extern "C" fn clCreateProgramWithSource_disp(context: cl_context, cou
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 26, &[context as usize, count as usize, strings as usize, lengths as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateProgramWithSource"), &[context as usize, count as usize, strings as usize, lengths as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateProgramWithSource, 26, *mut c_void, (context: cl_context, count: cl_uint, strings: *const *mut c_char, lengths: *const usize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateProgramWithSource_disp);
+gen_entry!(clCreateProgramWithSource, crate::dispatch::slot_of("clCreateProgramWithSource"), *mut c_void, (context: cl_context, count: cl_uint, strings: *const *mut c_char, lengths: *const usize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateProgramWithSource_disp);
 
 // ── slot 27: clCreateProgramWithBinary ──
 #[allow(clippy::too_many_arguments)]
@@ -295,9 +295,9 @@ pub unsafe extern "C" fn clCreateProgramWithBinary_disp(context: cl_context, num
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 27, &[context as usize, num_devices as usize, device_list as usize, lengths as usize, binaries as usize, binary_status as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateProgramWithBinary"), &[context as usize, num_devices as usize, device_list as usize, lengths as usize, binaries as usize, binary_status as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateProgramWithBinary, 27, *mut c_void, (context: cl_context, num_devices: cl_uint, device_list: *const cl_device_id, lengths: *const usize, binaries: *const *mut c_char, binary_status: *mut cl_int, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2], clCreateProgramWithBinary_disp);
+gen_entry!(clCreateProgramWithBinary, crate::dispatch::slot_of("clCreateProgramWithBinary"), *mut c_void, (context: cl_context, num_devices: cl_uint, device_list: *const cl_device_id, lengths: *const usize, binaries: *const *mut c_char, binary_status: *mut cl_int, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2], clCreateProgramWithBinary_disp);
 
 // ── slot 28: clRetainProgram ──
 #[allow(clippy::too_many_arguments)]
@@ -306,9 +306,9 @@ pub unsafe extern "C" fn clRetainProgram_disp(program: cl_program) -> cl_int {
     return CL_INVALID_PROGRAM;
     }
     let t = object_dispatch(program);
-    call_by_slot(t, 28, &[program as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clRetainProgram"), &[program as usize]) as cl_int
 }
-gen_entry!(clRetainProgram, 28, cl_int, (program: cl_program), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainProgram_disp);
+gen_entry!(clRetainProgram, crate::dispatch::slot_of("clRetainProgram"), cl_int, (program: cl_program), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainProgram_disp);
 
 // ── slot 29: clReleaseProgram ──
 #[allow(clippy::too_many_arguments)]
@@ -317,9 +317,9 @@ pub unsafe extern "C" fn clReleaseProgram_disp(program: cl_program) -> cl_int {
     return CL_INVALID_PROGRAM;
     }
     let t = object_dispatch(program);
-    call_by_slot(t, 29, &[program as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clReleaseProgram"), &[program as usize]) as cl_int
 }
-gen_entry!(clReleaseProgram, 29, cl_int, (program: cl_program), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseProgram_disp);
+gen_entry!(clReleaseProgram, crate::dispatch::slot_of("clReleaseProgram"), cl_int, (program: cl_program), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseProgram_disp);
 
 // ── slot 30: clBuildProgram ──
 #[allow(clippy::too_many_arguments)]
@@ -328,9 +328,9 @@ pub unsafe extern "C" fn clBuildProgram_disp(program: cl_program, num_devices: c
     return CL_INVALID_PROGRAM;
     }
     let t = object_dispatch(program);
-    call_by_slot(t, 30, &[program as usize, num_devices as usize, device_list as usize, options as usize, pfn_notify as usize, user_data as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clBuildProgram"), &[program as usize, num_devices as usize, device_list as usize, options as usize, pfn_notify as usize, user_data as usize]) as cl_int
 }
-gen_entry!(clBuildProgram, 30, cl_int, (program: cl_program, num_devices: cl_uint, device_list: *const cl_device_id, options: *const c_char, pfn_notify: *mut c_void, user_data: *mut c_void), [__pad0,__pad1,__pad2,__pad3], clBuildProgram_disp);
+gen_entry!(clBuildProgram, crate::dispatch::slot_of("clBuildProgram"), cl_int, (program: cl_program, num_devices: cl_uint, device_list: *const cl_device_id, options: *const c_char, pfn_notify: *mut c_void, user_data: *mut c_void), [__pad0,__pad1,__pad2,__pad3], clBuildProgram_disp);
 
 // ── slot 32: clGetProgramInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -339,9 +339,9 @@ pub unsafe extern "C" fn clGetProgramInfo_disp(program: cl_program, param_name: 
     return CL_INVALID_PROGRAM;
     }
     let t = object_dispatch(program);
-    call_by_slot(t, 32, &[program as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetProgramInfo"), &[program as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
 }
-gen_entry!(clGetProgramInfo, 32, cl_int, (program: cl_program, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetProgramInfo_disp);
+gen_entry!(clGetProgramInfo, crate::dispatch::slot_of("clGetProgramInfo"), cl_int, (program: cl_program, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetProgramInfo_disp);
 
 // ── slot 33: clGetProgramBuildInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -350,9 +350,9 @@ pub unsafe extern "C" fn clGetProgramBuildInfo_disp(program: cl_program, device:
     return CL_INVALID_PROGRAM;
     }
     let t = object_dispatch(program);
-    call_by_slot(t, 33, &[program as usize, device as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetProgramBuildInfo"), &[program as usize, device as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
 }
-gen_entry!(clGetProgramBuildInfo, 33, cl_int, (program: cl_program, device: cl_device_id, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3], clGetProgramBuildInfo_disp);
+gen_entry!(clGetProgramBuildInfo, crate::dispatch::slot_of("clGetProgramBuildInfo"), cl_int, (program: cl_program, device: cl_device_id, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3], clGetProgramBuildInfo_disp);
 
 // ── slot 34: clCreateKernel ──
 #[allow(clippy::too_many_arguments)]
@@ -362,9 +362,9 @@ pub unsafe extern "C" fn clCreateKernel_disp(program: cl_program, kernel_name: *
     return core::ptr::null_mut();
     }
     let t = object_dispatch(program);
-    call_by_slot(t, 34, &[program as usize, kernel_name as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateKernel"), &[program as usize, kernel_name as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateKernel, 34, *mut c_void, (program: cl_program, kernel_name: *const c_char, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clCreateKernel_disp);
+gen_entry!(clCreateKernel, crate::dispatch::slot_of("clCreateKernel"), *mut c_void, (program: cl_program, kernel_name: *const c_char, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clCreateKernel_disp);
 
 // ── slot 35: clCreateKernelsInProgram ──
 #[allow(clippy::too_many_arguments)]
@@ -373,9 +373,9 @@ pub unsafe extern "C" fn clCreateKernelsInProgram_disp(program: cl_program, num_
     return CL_INVALID_PROGRAM;
     }
     let t = object_dispatch(program);
-    call_by_slot(t, 35, &[program as usize, num_kernels as usize, kernels as usize, num_kernels_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clCreateKernelsInProgram"), &[program as usize, num_kernels as usize, kernels as usize, num_kernels_ret as usize]) as cl_int
 }
-gen_entry!(clCreateKernelsInProgram, 35, cl_int, (program: cl_program, num_kernels: cl_uint, kernels: *mut cl_kernel, num_kernels_ret: *mut cl_uint), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateKernelsInProgram_disp);
+gen_entry!(clCreateKernelsInProgram, crate::dispatch::slot_of("clCreateKernelsInProgram"), cl_int, (program: cl_program, num_kernels: cl_uint, kernels: *mut cl_kernel, num_kernels_ret: *mut cl_uint), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateKernelsInProgram_disp);
 
 // ── slot 36: clRetainKernel ──
 #[allow(clippy::too_many_arguments)]
@@ -384,9 +384,9 @@ pub unsafe extern "C" fn clRetainKernel_disp(kernel: cl_kernel) -> cl_int {
     return CL_INVALID_KERNEL;
     }
     let t = object_dispatch(kernel);
-    call_by_slot(t, 36, &[kernel as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clRetainKernel"), &[kernel as usize]) as cl_int
 }
-gen_entry!(clRetainKernel, 36, cl_int, (kernel: cl_kernel), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainKernel_disp);
+gen_entry!(clRetainKernel, crate::dispatch::slot_of("clRetainKernel"), cl_int, (kernel: cl_kernel), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainKernel_disp);
 
 // ── slot 37: clReleaseKernel ──
 #[allow(clippy::too_many_arguments)]
@@ -395,9 +395,9 @@ pub unsafe extern "C" fn clReleaseKernel_disp(kernel: cl_kernel) -> cl_int {
     return CL_INVALID_KERNEL;
     }
     let t = object_dispatch(kernel);
-    call_by_slot(t, 37, &[kernel as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clReleaseKernel"), &[kernel as usize]) as cl_int
 }
-gen_entry!(clReleaseKernel, 37, cl_int, (kernel: cl_kernel), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseKernel_disp);
+gen_entry!(clReleaseKernel, crate::dispatch::slot_of("clReleaseKernel"), cl_int, (kernel: cl_kernel), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseKernel_disp);
 
 // ── slot 38: clSetKernelArg ──
 #[allow(clippy::too_many_arguments)]
@@ -406,9 +406,9 @@ pub unsafe extern "C" fn clSetKernelArg_disp(kernel: cl_kernel, arg_index: cl_ui
     return CL_INVALID_KERNEL;
     }
     let t = object_dispatch(kernel);
-    call_by_slot(t, 38, &[kernel as usize, arg_index as usize, arg_size as usize, arg_value as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clSetKernelArg"), &[kernel as usize, arg_index as usize, arg_size as usize, arg_value as usize]) as cl_int
 }
-gen_entry!(clSetKernelArg, 38, cl_int, (kernel: cl_kernel, arg_index: cl_uint, arg_size: usize, arg_value: *const c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clSetKernelArg_disp);
+gen_entry!(clSetKernelArg, crate::dispatch::slot_of("clSetKernelArg"), cl_int, (kernel: cl_kernel, arg_index: cl_uint, arg_size: usize, arg_value: *const c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clSetKernelArg_disp);
 
 // ── slot 39: clGetKernelInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -417,9 +417,9 @@ pub unsafe extern "C" fn clGetKernelInfo_disp(kernel: cl_kernel, param_name: u32
     return CL_INVALID_KERNEL;
     }
     let t = object_dispatch(kernel);
-    call_by_slot(t, 39, &[kernel as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetKernelInfo"), &[kernel as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
 }
-gen_entry!(clGetKernelInfo, 39, cl_int, (kernel: cl_kernel, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetKernelInfo_disp);
+gen_entry!(clGetKernelInfo, crate::dispatch::slot_of("clGetKernelInfo"), cl_int, (kernel: cl_kernel, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetKernelInfo_disp);
 
 // ── slot 40: clGetKernelWorkGroupInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -428,9 +428,9 @@ pub unsafe extern "C" fn clGetKernelWorkGroupInfo_disp(kernel: cl_kernel, device
     return CL_INVALID_KERNEL;
     }
     let t = object_dispatch(kernel);
-    call_by_slot(t, 40, &[kernel as usize, device as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetKernelWorkGroupInfo"), &[kernel as usize, device as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
 }
-gen_entry!(clGetKernelWorkGroupInfo, 40, cl_int, (kernel: cl_kernel, device: cl_device_id, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3], clGetKernelWorkGroupInfo_disp);
+gen_entry!(clGetKernelWorkGroupInfo, crate::dispatch::slot_of("clGetKernelWorkGroupInfo"), cl_int, (kernel: cl_kernel, device: cl_device_id, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3], clGetKernelWorkGroupInfo_disp);
 
 // ── slot 42: clGetEventInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -439,9 +439,9 @@ pub unsafe extern "C" fn clGetEventInfo_disp(event: cl_event, param_name: u32, p
     return CL_INVALID_EVENT;
     }
     let t = object_dispatch(event);
-    call_by_slot(t, 42, &[event as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetEventInfo"), &[event as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
 }
-gen_entry!(clGetEventInfo, 42, cl_int, (event: cl_event, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetEventInfo_disp);
+gen_entry!(clGetEventInfo, crate::dispatch::slot_of("clGetEventInfo"), cl_int, (event: cl_event, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetEventInfo_disp);
 
 // ── slot 43: clRetainEvent ──
 #[allow(clippy::too_many_arguments)]
@@ -450,9 +450,9 @@ pub unsafe extern "C" fn clRetainEvent_disp(event: cl_event) -> cl_int {
     return CL_INVALID_EVENT;
     }
     let t = object_dispatch(event);
-    call_by_slot(t, 43, &[event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clRetainEvent"), &[event as usize]) as cl_int
 }
-gen_entry!(clRetainEvent, 43, cl_int, (event: cl_event), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainEvent_disp);
+gen_entry!(clRetainEvent, crate::dispatch::slot_of("clRetainEvent"), cl_int, (event: cl_event), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainEvent_disp);
 
 // ── slot 44: clReleaseEvent ──
 #[allow(clippy::too_many_arguments)]
@@ -461,9 +461,9 @@ pub unsafe extern "C" fn clReleaseEvent_disp(event: cl_event) -> cl_int {
     return CL_INVALID_EVENT;
     }
     let t = object_dispatch(event);
-    call_by_slot(t, 44, &[event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clReleaseEvent"), &[event as usize]) as cl_int
 }
-gen_entry!(clReleaseEvent, 44, cl_int, (event: cl_event), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseEvent_disp);
+gen_entry!(clReleaseEvent, crate::dispatch::slot_of("clReleaseEvent"), cl_int, (event: cl_event), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseEvent_disp);
 
 // ── slot 45: clGetEventProfilingInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -472,9 +472,9 @@ pub unsafe extern "C" fn clGetEventProfilingInfo_disp(event: cl_event, param_nam
     return CL_INVALID_EVENT;
     }
     let t = object_dispatch(event);
-    call_by_slot(t, 45, &[event as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetEventProfilingInfo"), &[event as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
 }
-gen_entry!(clGetEventProfilingInfo, 45, cl_int, (event: cl_event, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetEventProfilingInfo_disp);
+gen_entry!(clGetEventProfilingInfo, crate::dispatch::slot_of("clGetEventProfilingInfo"), cl_int, (event: cl_event, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetEventProfilingInfo_disp);
 
 // ── slot 46: clFlush ──
 #[allow(clippy::too_many_arguments)]
@@ -483,9 +483,9 @@ pub unsafe extern "C" fn clFlush_disp(command_queue: cl_command_queue) -> cl_int
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 46, &[command_queue as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clFlush"), &[command_queue as usize]) as cl_int
 }
-gen_entry!(clFlush, 46, cl_int, (command_queue: cl_command_queue), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clFlush_disp);
+gen_entry!(clFlush, crate::dispatch::slot_of("clFlush"), cl_int, (command_queue: cl_command_queue), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clFlush_disp);
 
 // ── slot 47: clFinish ──
 #[allow(clippy::too_many_arguments)]
@@ -494,9 +494,9 @@ pub unsafe extern "C" fn clFinish_disp(command_queue: cl_command_queue) -> cl_in
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 47, &[command_queue as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clFinish"), &[command_queue as usize]) as cl_int
 }
-gen_entry!(clFinish, 47, cl_int, (command_queue: cl_command_queue), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clFinish_disp);
+gen_entry!(clFinish, crate::dispatch::slot_of("clFinish"), cl_int, (command_queue: cl_command_queue), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clFinish_disp);
 
 // ── slot 48: clEnqueueReadBuffer ──
 #[allow(clippy::too_many_arguments)]
@@ -505,9 +505,9 @@ pub unsafe extern "C" fn clEnqueueReadBuffer_disp(command_queue: cl_command_queu
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 48, &[command_queue as usize, buffer as usize, blocking_read as usize, offset as usize, cb as usize, ptr as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueReadBuffer"), &[command_queue as usize, buffer as usize, blocking_read as usize, offset as usize, cb as usize, ptr as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueReadBuffer, 48, cl_int, (command_queue: cl_command_queue, buffer: cl_mem, blocking_read: cl_bool, offset: usize, cb: usize, ptr: *mut c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0], clEnqueueReadBuffer_disp);
+gen_entry!(clEnqueueReadBuffer, crate::dispatch::slot_of("clEnqueueReadBuffer"), cl_int, (command_queue: cl_command_queue, buffer: cl_mem, blocking_read: cl_bool, offset: usize, cb: usize, ptr: *mut c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0], clEnqueueReadBuffer_disp);
 
 // ── slot 49: clEnqueueWriteBuffer ──
 #[allow(clippy::too_many_arguments)]
@@ -516,9 +516,9 @@ pub unsafe extern "C" fn clEnqueueWriteBuffer_disp(command_queue: cl_command_que
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 49, &[command_queue as usize, buffer as usize, blocking_write as usize, offset as usize, cb as usize, ptr as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueWriteBuffer"), &[command_queue as usize, buffer as usize, blocking_write as usize, offset as usize, cb as usize, ptr as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueWriteBuffer, 49, cl_int, (command_queue: cl_command_queue, buffer: cl_mem, blocking_write: cl_bool, offset: usize, cb: usize, ptr: *const c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0], clEnqueueWriteBuffer_disp);
+gen_entry!(clEnqueueWriteBuffer, crate::dispatch::slot_of("clEnqueueWriteBuffer"), cl_int, (command_queue: cl_command_queue, buffer: cl_mem, blocking_write: cl_bool, offset: usize, cb: usize, ptr: *const c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0], clEnqueueWriteBuffer_disp);
 
 // ── slot 50: clEnqueueCopyBuffer ──
 #[allow(clippy::too_many_arguments)]
@@ -527,9 +527,9 @@ pub unsafe extern "C" fn clEnqueueCopyBuffer_disp(command_queue: cl_command_queu
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 50, &[command_queue as usize, src_buffer as usize, dst_buffer as usize, src_offset as usize, dst_offset as usize, cb as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueCopyBuffer"), &[command_queue as usize, src_buffer as usize, dst_buffer as usize, src_offset as usize, dst_offset as usize, cb as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueCopyBuffer, 50, cl_int, (command_queue: cl_command_queue, src_buffer: cl_mem, dst_buffer: cl_mem, src_offset: usize, dst_offset: usize, cb: usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0], clEnqueueCopyBuffer_disp);
+gen_entry!(clEnqueueCopyBuffer, crate::dispatch::slot_of("clEnqueueCopyBuffer"), cl_int, (command_queue: cl_command_queue, src_buffer: cl_mem, dst_buffer: cl_mem, src_offset: usize, dst_offset: usize, cb: usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0], clEnqueueCopyBuffer_disp);
 
 // ── slot 51: clEnqueueReadImage ──
 #[allow(clippy::too_many_arguments)]
@@ -538,9 +538,9 @@ pub unsafe extern "C" fn clEnqueueReadImage_disp(command_queue: cl_command_queue
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 51, &[command_queue as usize, image as usize, blocking_read as usize, unnamed as usize, unnamed1 as usize, row_pitch as usize, slice_pitch as usize, ptr as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueReadImage"), &[command_queue as usize, image as usize, blocking_read as usize, unnamed as usize, unnamed1 as usize, row_pitch as usize, slice_pitch as usize, ptr as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueReadImage, 51, cl_int, (command_queue: cl_command_queue, image: cl_mem, blocking_read: cl_bool, unnamed: *const usize, unnamed1: *const usize, row_pitch: usize, slice_pitch: usize, ptr: *mut c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [], clEnqueueReadImage_disp);
+gen_entry!(clEnqueueReadImage, crate::dispatch::slot_of("clEnqueueReadImage"), cl_int, (command_queue: cl_command_queue, image: cl_mem, blocking_read: cl_bool, unnamed: *const usize, unnamed1: *const usize, row_pitch: usize, slice_pitch: usize, ptr: *mut c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [], clEnqueueReadImage_disp);
 
 // ── slot 52: clEnqueueWriteImage ──
 #[allow(clippy::too_many_arguments)]
@@ -549,9 +549,9 @@ pub unsafe extern "C" fn clEnqueueWriteImage_disp(command_queue: cl_command_queu
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 52, &[command_queue as usize, image as usize, blocking_write as usize, unnamed as usize, unnamed1 as usize, input_row_pitch as usize, input_slice_pitch as usize, ptr as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueWriteImage"), &[command_queue as usize, image as usize, blocking_write as usize, unnamed as usize, unnamed1 as usize, input_row_pitch as usize, input_slice_pitch as usize, ptr as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueWriteImage, 52, cl_int, (command_queue: cl_command_queue, image: cl_mem, blocking_write: cl_bool, unnamed: *const usize, unnamed1: *const usize, input_row_pitch: usize, input_slice_pitch: usize, ptr: *const c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [], clEnqueueWriteImage_disp);
+gen_entry!(clEnqueueWriteImage, crate::dispatch::slot_of("clEnqueueWriteImage"), cl_int, (command_queue: cl_command_queue, image: cl_mem, blocking_write: cl_bool, unnamed: *const usize, unnamed1: *const usize, input_row_pitch: usize, input_slice_pitch: usize, ptr: *const c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [], clEnqueueWriteImage_disp);
 
 // ── slot 53: clEnqueueCopyImage ──
 #[allow(clippy::too_many_arguments)]
@@ -560,9 +560,9 @@ pub unsafe extern "C" fn clEnqueueCopyImage_disp(command_queue: cl_command_queue
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 53, &[command_queue as usize, src_image as usize, dst_image as usize, unnamed as usize, unnamed1 as usize, unnamed2 as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueCopyImage"), &[command_queue as usize, src_image as usize, dst_image as usize, unnamed as usize, unnamed1 as usize, unnamed2 as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueCopyImage, 53, cl_int, (command_queue: cl_command_queue, src_image: cl_mem, dst_image: cl_mem, unnamed: *const usize, unnamed1: *const usize, unnamed2: *const usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0], clEnqueueCopyImage_disp);
+gen_entry!(clEnqueueCopyImage, crate::dispatch::slot_of("clEnqueueCopyImage"), cl_int, (command_queue: cl_command_queue, src_image: cl_mem, dst_image: cl_mem, unnamed: *const usize, unnamed1: *const usize, unnamed2: *const usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0], clEnqueueCopyImage_disp);
 
 // ── slot 54: clEnqueueCopyImageToBuffer ──
 #[allow(clippy::too_many_arguments)]
@@ -571,9 +571,9 @@ pub unsafe extern "C" fn clEnqueueCopyImageToBuffer_disp(command_queue: cl_comma
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 54, &[command_queue as usize, src_image as usize, dst_buffer as usize, unnamed as usize, unnamed1 as usize, dst_offset as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueCopyImageToBuffer"), &[command_queue as usize, src_image as usize, dst_buffer as usize, unnamed as usize, unnamed1 as usize, dst_offset as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueCopyImageToBuffer, 54, cl_int, (command_queue: cl_command_queue, src_image: cl_mem, dst_buffer: cl_mem, unnamed: *const usize, unnamed1: *const usize, dst_offset: usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0], clEnqueueCopyImageToBuffer_disp);
+gen_entry!(clEnqueueCopyImageToBuffer, crate::dispatch::slot_of("clEnqueueCopyImageToBuffer"), cl_int, (command_queue: cl_command_queue, src_image: cl_mem, dst_buffer: cl_mem, unnamed: *const usize, unnamed1: *const usize, dst_offset: usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0], clEnqueueCopyImageToBuffer_disp);
 
 // ── slot 55: clEnqueueCopyBufferToImage ──
 #[allow(clippy::too_many_arguments)]
@@ -582,9 +582,9 @@ pub unsafe extern "C" fn clEnqueueCopyBufferToImage_disp(command_queue: cl_comma
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 55, &[command_queue as usize, src_buffer as usize, dst_image as usize, src_offset as usize, unnamed as usize, unnamed1 as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueCopyBufferToImage"), &[command_queue as usize, src_buffer as usize, dst_image as usize, src_offset as usize, unnamed as usize, unnamed1 as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueCopyBufferToImage, 55, cl_int, (command_queue: cl_command_queue, src_buffer: cl_mem, dst_image: cl_mem, src_offset: usize, unnamed: *const usize, unnamed1: *const usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0], clEnqueueCopyBufferToImage_disp);
+gen_entry!(clEnqueueCopyBufferToImage, crate::dispatch::slot_of("clEnqueueCopyBufferToImage"), cl_int, (command_queue: cl_command_queue, src_buffer: cl_mem, dst_image: cl_mem, src_offset: usize, unnamed: *const usize, unnamed1: *const usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0], clEnqueueCopyBufferToImage_disp);
 
 // ── slot 56: clEnqueueMapBuffer ──
 #[allow(clippy::too_many_arguments)]
@@ -594,9 +594,9 @@ pub unsafe extern "C" fn clEnqueueMapBuffer_disp(command_queue: cl_command_queue
     return core::ptr::null_mut();
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 56, &[command_queue as usize, buffer as usize, blocking_map as usize, val(&map_flags), offset as usize, cb as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueMapBuffer"), &[command_queue as usize, buffer as usize, blocking_map as usize, val(&map_flags), offset as usize, cb as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clEnqueueMapBuffer, 56, *mut c_void, (command_queue: cl_command_queue, buffer: cl_mem, blocking_map: cl_bool, map_flags: u64, offset: usize, cb: usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event, errcode_ret: *mut cl_int), [], clEnqueueMapBuffer_disp);
+gen_entry!(clEnqueueMapBuffer, crate::dispatch::slot_of("clEnqueueMapBuffer"), *mut c_void, (command_queue: cl_command_queue, buffer: cl_mem, blocking_map: cl_bool, map_flags: u64, offset: usize, cb: usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event, errcode_ret: *mut cl_int), [], clEnqueueMapBuffer_disp);
 
 // ── slot 57: clEnqueueMapImage ──
 #[allow(clippy::too_many_arguments)]
@@ -606,9 +606,9 @@ pub unsafe extern "C" fn clEnqueueMapImage_disp(command_queue: cl_command_queue,
     return core::ptr::null_mut();
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 57, &[command_queue as usize, image as usize, blocking_map as usize, val(&map_flags), unnamed as usize, unnamed1 as usize, image_row_pitch as usize, image_slice_pitch as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueMapImage"), &[command_queue as usize, image as usize, blocking_map as usize, val(&map_flags), unnamed as usize, unnamed1 as usize, image_row_pitch as usize, image_slice_pitch as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clEnqueueMapImage, 57, *mut c_void, (command_queue: cl_command_queue, image: cl_mem, blocking_map: cl_bool, map_flags: u64, unnamed: *const usize, unnamed1: *const usize, image_row_pitch: *mut usize, image_slice_pitch: *mut usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event, errcode_ret: *mut cl_int), [], clEnqueueMapImage_disp);
+gen_entry!(clEnqueueMapImage, crate::dispatch::slot_of("clEnqueueMapImage"), *mut c_void, (command_queue: cl_command_queue, image: cl_mem, blocking_map: cl_bool, map_flags: u64, unnamed: *const usize, unnamed1: *const usize, image_row_pitch: *mut usize, image_slice_pitch: *mut usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event, errcode_ret: *mut cl_int), [], clEnqueueMapImage_disp);
 
 // ── slot 58: clEnqueueUnmapMemObject ──
 #[allow(clippy::too_many_arguments)]
@@ -617,9 +617,9 @@ pub unsafe extern "C" fn clEnqueueUnmapMemObject_disp(command_queue: cl_command_
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 58, &[command_queue as usize, memobj as usize, mapped_ptr as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueUnmapMemObject"), &[command_queue as usize, memobj as usize, mapped_ptr as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueUnmapMemObject, 58, cl_int, (command_queue: cl_command_queue, memobj: cl_mem, mapped_ptr: *mut c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueUnmapMemObject_disp);
+gen_entry!(clEnqueueUnmapMemObject, crate::dispatch::slot_of("clEnqueueUnmapMemObject"), cl_int, (command_queue: cl_command_queue, memobj: cl_mem, mapped_ptr: *mut c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueUnmapMemObject_disp);
 
 // ── slot 59: clEnqueueNDRangeKernel ──
 #[allow(clippy::too_many_arguments)]
@@ -628,9 +628,9 @@ pub unsafe extern "C" fn clEnqueueNDRangeKernel_disp(command_queue: cl_command_q
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 59, &[command_queue as usize, kernel as usize, work_dim as usize, global_work_offset as usize, global_work_size as usize, local_work_size as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueNDRangeKernel"), &[command_queue as usize, kernel as usize, work_dim as usize, global_work_offset as usize, global_work_size as usize, local_work_size as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueNDRangeKernel, 59, cl_int, (command_queue: cl_command_queue, kernel: cl_kernel, work_dim: cl_uint, global_work_offset: *const usize, global_work_size: *const usize, local_work_size: *const usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0], clEnqueueNDRangeKernel_disp);
+gen_entry!(clEnqueueNDRangeKernel, crate::dispatch::slot_of("clEnqueueNDRangeKernel"), cl_int, (command_queue: cl_command_queue, kernel: cl_kernel, work_dim: cl_uint, global_work_offset: *const usize, global_work_size: *const usize, local_work_size: *const usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0], clEnqueueNDRangeKernel_disp);
 
 // ── slot 60: clEnqueueTask ──
 #[allow(clippy::too_many_arguments)]
@@ -639,9 +639,9 @@ pub unsafe extern "C" fn clEnqueueTask_disp(command_queue: cl_command_queue, ker
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 60, &[command_queue as usize, kernel as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueTask"), &[command_queue as usize, kernel as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueTask, 60, cl_int, (command_queue: cl_command_queue, kernel: cl_kernel, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3,__pad4], clEnqueueTask_disp);
+gen_entry!(clEnqueueTask, crate::dispatch::slot_of("clEnqueueTask"), cl_int, (command_queue: cl_command_queue, kernel: cl_kernel, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3,__pad4], clEnqueueTask_disp);
 
 // ── slot 61: clEnqueueNativeKernel ──
 #[allow(clippy::too_many_arguments)]
@@ -650,9 +650,9 @@ pub unsafe extern "C" fn clEnqueueNativeKernel_disp(command_queue: cl_command_qu
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 61, &[command_queue as usize, user_func as usize, args as usize, cb_args as usize, num_mem_objects as usize, mem_list as usize, args_mem_loc as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueNativeKernel"), &[command_queue as usize, user_func as usize, args as usize, cb_args as usize, num_mem_objects as usize, mem_list as usize, args_mem_loc as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueNativeKernel, 61, cl_int, (command_queue: cl_command_queue, user_func: *mut c_void, args: *mut c_void, cb_args: usize, num_mem_objects: cl_uint, mem_list: *const cl_mem, args_mem_loc: *const *mut c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [], clEnqueueNativeKernel_disp);
+gen_entry!(clEnqueueNativeKernel, crate::dispatch::slot_of("clEnqueueNativeKernel"), cl_int, (command_queue: cl_command_queue, user_func: *mut c_void, args: *mut c_void, cb_args: usize, num_mem_objects: cl_uint, mem_list: *const cl_mem, args_mem_loc: *const *mut c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [], clEnqueueNativeKernel_disp);
 
 // ── slot 62: clEnqueueMarker ──
 #[allow(clippy::too_many_arguments)]
@@ -661,9 +661,9 @@ pub unsafe extern "C" fn clEnqueueMarker_disp(command_queue: cl_command_queue, e
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 62, &[command_queue as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueMarker"), &[command_queue as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueMarker, 62, cl_int, (command_queue: cl_command_queue, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7], clEnqueueMarker_disp);
+gen_entry!(clEnqueueMarker, crate::dispatch::slot_of("clEnqueueMarker"), cl_int, (command_queue: cl_command_queue, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7], clEnqueueMarker_disp);
 
 // ── slot 63: clEnqueueWaitForEvents ──
 #[allow(clippy::too_many_arguments)]
@@ -672,9 +672,9 @@ pub unsafe extern "C" fn clEnqueueWaitForEvents_disp(command_queue: cl_command_q
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 63, &[command_queue as usize, num_events as usize, event_list as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueWaitForEvents"), &[command_queue as usize, num_events as usize, event_list as usize]) as cl_int
 }
-gen_entry!(clEnqueueWaitForEvents, 63, cl_int, (command_queue: cl_command_queue, num_events: cl_uint, event_list: *const cl_event), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clEnqueueWaitForEvents_disp);
+gen_entry!(clEnqueueWaitForEvents, crate::dispatch::slot_of("clEnqueueWaitForEvents"), cl_int, (command_queue: cl_command_queue, num_events: cl_uint, event_list: *const cl_event), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clEnqueueWaitForEvents_disp);
 
 // ── slot 64: clEnqueueBarrier ──
 #[allow(clippy::too_many_arguments)]
@@ -683,9 +683,9 @@ pub unsafe extern "C" fn clEnqueueBarrier_disp(command_queue: cl_command_queue) 
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 64, &[command_queue as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueBarrier"), &[command_queue as usize]) as cl_int
 }
-gen_entry!(clEnqueueBarrier, 64, cl_int, (command_queue: cl_command_queue), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clEnqueueBarrier_disp);
+gen_entry!(clEnqueueBarrier, crate::dispatch::slot_of("clEnqueueBarrier"), cl_int, (command_queue: cl_command_queue), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clEnqueueBarrier_disp);
 
 // ── slot 66: clCreateFromGLBuffer ──
 #[allow(clippy::too_many_arguments)]
@@ -695,9 +695,9 @@ pub unsafe extern "C" fn clCreateFromGLBuffer_disp(context: cl_context, flags: u
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 66, &[context as usize, val(&flags), bufobj as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateFromGLBuffer"), &[context as usize, val(&flags), bufobj as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateFromGLBuffer, 66, *mut c_void, (context: cl_context, flags: u64, bufobj: u32, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateFromGLBuffer_disp);
+gen_entry!(clCreateFromGLBuffer, crate::dispatch::slot_of("clCreateFromGLBuffer"), *mut c_void, (context: cl_context, flags: u64, bufobj: u32, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateFromGLBuffer_disp);
 
 // ── slot 67: clCreateFromGLTexture2D ──
 #[allow(clippy::too_many_arguments)]
@@ -707,9 +707,9 @@ pub unsafe extern "C" fn clCreateFromGLTexture2D_disp(context: cl_context, flags
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 67, &[context as usize, val(&flags), target as usize, miplevel as usize, texture as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateFromGLTexture2D"), &[context as usize, val(&flags), target as usize, miplevel as usize, texture as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateFromGLTexture2D, 67, *mut c_void, (context: cl_context, flags: u64, target: u32, miplevel: i32, texture: u32, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3], clCreateFromGLTexture2D_disp);
+gen_entry!(clCreateFromGLTexture2D, crate::dispatch::slot_of("clCreateFromGLTexture2D"), *mut c_void, (context: cl_context, flags: u64, target: u32, miplevel: i32, texture: u32, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3], clCreateFromGLTexture2D_disp);
 
 // ── slot 68: clCreateFromGLTexture3D ──
 #[allow(clippy::too_many_arguments)]
@@ -719,9 +719,9 @@ pub unsafe extern "C" fn clCreateFromGLTexture3D_disp(context: cl_context, flags
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 68, &[context as usize, val(&flags), target as usize, miplevel as usize, texture as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateFromGLTexture3D"), &[context as usize, val(&flags), target as usize, miplevel as usize, texture as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateFromGLTexture3D, 68, *mut c_void, (context: cl_context, flags: u64, target: u32, miplevel: i32, texture: u32, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3], clCreateFromGLTexture3D_disp);
+gen_entry!(clCreateFromGLTexture3D, crate::dispatch::slot_of("clCreateFromGLTexture3D"), *mut c_void, (context: cl_context, flags: u64, target: u32, miplevel: i32, texture: u32, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3], clCreateFromGLTexture3D_disp);
 
 // ── slot 69: clCreateFromGLRenderbuffer ──
 #[allow(clippy::too_many_arguments)]
@@ -731,9 +731,9 @@ pub unsafe extern "C" fn clCreateFromGLRenderbuffer_disp(context: cl_context, fl
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 69, &[context as usize, val(&flags), renderbuffer as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateFromGLRenderbuffer"), &[context as usize, val(&flags), renderbuffer as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateFromGLRenderbuffer, 69, *mut c_void, (context: cl_context, flags: u64, renderbuffer: u32, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateFromGLRenderbuffer_disp);
+gen_entry!(clCreateFromGLRenderbuffer, crate::dispatch::slot_of("clCreateFromGLRenderbuffer"), *mut c_void, (context: cl_context, flags: u64, renderbuffer: u32, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateFromGLRenderbuffer_disp);
 
 // ── slot 70: clGetGLObjectInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -742,9 +742,9 @@ pub unsafe extern "C" fn clGetGLObjectInfo_disp(memobj: cl_mem, gl_object_type: 
     return CL_INVALID_MEM_OBJECT;
     }
     let t = object_dispatch(memobj);
-    call_by_slot(t, 70, &[memobj as usize, gl_object_type as usize, gl_object_name as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetGLObjectInfo"), &[memobj as usize, gl_object_type as usize, gl_object_name as usize]) as cl_int
 }
-gen_entry!(clGetGLObjectInfo, 70, cl_int, (memobj: cl_mem, gl_object_type: *mut c_void, gl_object_name: *mut u32), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clGetGLObjectInfo_disp);
+gen_entry!(clGetGLObjectInfo, crate::dispatch::slot_of("clGetGLObjectInfo"), cl_int, (memobj: cl_mem, gl_object_type: *mut c_void, gl_object_name: *mut u32), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clGetGLObjectInfo_disp);
 
 // ── slot 71: clGetGLTextureInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -753,9 +753,9 @@ pub unsafe extern "C" fn clGetGLTextureInfo_disp(memobj: cl_mem, param_name: u32
     return CL_INVALID_MEM_OBJECT;
     }
     let t = object_dispatch(memobj);
-    call_by_slot(t, 71, &[memobj as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetGLTextureInfo"), &[memobj as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
 }
-gen_entry!(clGetGLTextureInfo, 71, cl_int, (memobj: cl_mem, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetGLTextureInfo_disp);
+gen_entry!(clGetGLTextureInfo, crate::dispatch::slot_of("clGetGLTextureInfo"), cl_int, (memobj: cl_mem, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetGLTextureInfo_disp);
 
 // ── slot 72: clEnqueueAcquireGLObjects ──
 #[allow(clippy::too_many_arguments)]
@@ -764,9 +764,9 @@ pub unsafe extern "C" fn clEnqueueAcquireGLObjects_disp(command_queue: cl_comman
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 72, &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueAcquireGLObjects"), &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueAcquireGLObjects, 72, cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueAcquireGLObjects_disp);
+gen_entry!(clEnqueueAcquireGLObjects, crate::dispatch::slot_of("clEnqueueAcquireGLObjects"), cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueAcquireGLObjects_disp);
 
 // ── slot 73: clEnqueueReleaseGLObjects ──
 #[allow(clippy::too_many_arguments)]
@@ -775,9 +775,9 @@ pub unsafe extern "C" fn clEnqueueReleaseGLObjects_disp(command_queue: cl_comman
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 73, &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueReleaseGLObjects"), &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueReleaseGLObjects, 73, cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueReleaseGLObjects_disp);
+gen_entry!(clEnqueueReleaseGLObjects, crate::dispatch::slot_of("clEnqueueReleaseGLObjects"), cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueReleaseGLObjects_disp);
 
 // ── slot 75: clGetDeviceIDsFromD3D10KHR ──
 #[allow(clippy::too_many_arguments)]
@@ -793,9 +793,9 @@ pub unsafe extern "C" fn clGetDeviceIDsFromD3D10KHR_disp(platform: cl_platform_i
         return CL_INVALID_PLATFORM;
         }
     };
-    call_by_slot(t, 75, &[platform as usize, d3d_device_source as usize, d3d_object as usize, d3d_device_set as usize, num_entries as usize, devices as usize, num_devices as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetDeviceIDsFromD3D10KHR"), &[platform as usize, d3d_device_source as usize, d3d_object as usize, d3d_device_set as usize, num_entries as usize, devices as usize, num_devices as usize]) as cl_int
 }
-gen_entry!(clGetDeviceIDsFromD3D10KHR, 75, cl_int, (platform: cl_platform_id, d3d_device_source: usize, d3d_object: *mut c_void, d3d_device_set: usize, num_entries: cl_uint, devices: *mut cl_device_id, num_devices: *mut cl_uint), [__pad0,__pad1,__pad2], clGetDeviceIDsFromD3D10KHR_disp);
+gen_entry!(clGetDeviceIDsFromD3D10KHR, crate::dispatch::slot_of("clGetDeviceIDsFromD3D10KHR"), cl_int, (platform: cl_platform_id, d3d_device_source: usize, d3d_object: *mut c_void, d3d_device_set: usize, num_entries: cl_uint, devices: *mut cl_device_id, num_devices: *mut cl_uint), [__pad0,__pad1,__pad2], clGetDeviceIDsFromD3D10KHR_disp);
 
 // ── slot 76: clCreateFromD3D10BufferKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -805,9 +805,9 @@ pub unsafe extern "C" fn clCreateFromD3D10BufferKHR_disp(context: cl_context, fl
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 76, &[context as usize, val(&flags), resource as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateFromD3D10BufferKHR"), &[context as usize, val(&flags), resource as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateFromD3D10BufferKHR, 76, *mut c_void, (context: cl_context, flags: u64, resource: *mut c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateFromD3D10BufferKHR_disp);
+gen_entry!(clCreateFromD3D10BufferKHR, crate::dispatch::slot_of("clCreateFromD3D10BufferKHR"), *mut c_void, (context: cl_context, flags: u64, resource: *mut c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateFromD3D10BufferKHR_disp);
 
 // ── slot 77: clCreateFromD3D10Texture2DKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -817,9 +817,9 @@ pub unsafe extern "C" fn clCreateFromD3D10Texture2DKHR_disp(context: cl_context,
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 77, &[context as usize, val(&flags), resource as usize, subresource as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateFromD3D10Texture2DKHR"), &[context as usize, val(&flags), resource as usize, subresource as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateFromD3D10Texture2DKHR, 77, *mut c_void, (context: cl_context, flags: u64, resource: *mut c_void, subresource: usize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateFromD3D10Texture2DKHR_disp);
+gen_entry!(clCreateFromD3D10Texture2DKHR, crate::dispatch::slot_of("clCreateFromD3D10Texture2DKHR"), *mut c_void, (context: cl_context, flags: u64, resource: *mut c_void, subresource: usize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateFromD3D10Texture2DKHR_disp);
 
 // ── slot 78: clCreateFromD3D10Texture3DKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -829,9 +829,9 @@ pub unsafe extern "C" fn clCreateFromD3D10Texture3DKHR_disp(context: cl_context,
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 78, &[context as usize, val(&flags), resource as usize, subresource as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateFromD3D10Texture3DKHR"), &[context as usize, val(&flags), resource as usize, subresource as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateFromD3D10Texture3DKHR, 78, *mut c_void, (context: cl_context, flags: u64, resource: *mut c_void, subresource: usize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateFromD3D10Texture3DKHR_disp);
+gen_entry!(clCreateFromD3D10Texture3DKHR, crate::dispatch::slot_of("clCreateFromD3D10Texture3DKHR"), *mut c_void, (context: cl_context, flags: u64, resource: *mut c_void, subresource: usize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateFromD3D10Texture3DKHR_disp);
 
 // ── slot 79: clEnqueueAcquireD3D10ObjectsKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -840,9 +840,9 @@ pub unsafe extern "C" fn clEnqueueAcquireD3D10ObjectsKHR_disp(command_queue: cl_
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 79, &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueAcquireD3D10ObjectsKHR"), &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueAcquireD3D10ObjectsKHR, 79, cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueAcquireD3D10ObjectsKHR_disp);
+gen_entry!(clEnqueueAcquireD3D10ObjectsKHR, crate::dispatch::slot_of("clEnqueueAcquireD3D10ObjectsKHR"), cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueAcquireD3D10ObjectsKHR_disp);
 
 // ── slot 80: clEnqueueReleaseD3D10ObjectsKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -851,9 +851,9 @@ pub unsafe extern "C" fn clEnqueueReleaseD3D10ObjectsKHR_disp(command_queue: cl_
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 80, &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueReleaseD3D10ObjectsKHR"), &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueReleaseD3D10ObjectsKHR, 80, cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueReleaseD3D10ObjectsKHR_disp);
+gen_entry!(clEnqueueReleaseD3D10ObjectsKHR, crate::dispatch::slot_of("clEnqueueReleaseD3D10ObjectsKHR"), cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueReleaseD3D10ObjectsKHR_disp);
 
 // ── slot 81: clSetEventCallback ──
 #[allow(clippy::too_many_arguments)]
@@ -862,9 +862,9 @@ pub unsafe extern "C" fn clSetEventCallback_disp(event: cl_event, command_exec_c
     return CL_INVALID_EVENT;
     }
     let t = object_dispatch(event);
-    call_by_slot(t, 81, &[event as usize, command_exec_callback_type as usize, pfn_notify as usize, user_data as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clSetEventCallback"), &[event as usize, command_exec_callback_type as usize, pfn_notify as usize, user_data as usize]) as cl_int
 }
-gen_entry!(clSetEventCallback, 81, cl_int, (event: cl_event, command_exec_callback_type: cl_int, pfn_notify: *mut c_void, user_data: *mut c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clSetEventCallback_disp);
+gen_entry!(clSetEventCallback, crate::dispatch::slot_of("clSetEventCallback"), cl_int, (event: cl_event, command_exec_callback_type: cl_int, pfn_notify: *mut c_void, user_data: *mut c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clSetEventCallback_disp);
 
 // ── slot 82: clCreateSubBuffer ──
 #[allow(clippy::too_many_arguments)]
@@ -874,9 +874,9 @@ pub unsafe extern "C" fn clCreateSubBuffer_disp(buffer: cl_mem, flags: u64, buff
     return core::ptr::null_mut();
     }
     let t = object_dispatch(buffer);
-    call_by_slot(t, 82, &[buffer as usize, val(&flags), buffer_create_type as usize, buffer_create_info as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateSubBuffer"), &[buffer as usize, val(&flags), buffer_create_type as usize, buffer_create_info as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateSubBuffer, 82, *mut c_void, (buffer: cl_mem, flags: u64, buffer_create_type: usize, buffer_create_info: *const c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateSubBuffer_disp);
+gen_entry!(clCreateSubBuffer, crate::dispatch::slot_of("clCreateSubBuffer"), *mut c_void, (buffer: cl_mem, flags: u64, buffer_create_type: usize, buffer_create_info: *const c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateSubBuffer_disp);
 
 // ── slot 83: clSetMemObjectDestructorCallback ──
 #[allow(clippy::too_many_arguments)]
@@ -885,9 +885,9 @@ pub unsafe extern "C" fn clSetMemObjectDestructorCallback_disp(memobj: cl_mem, p
     return CL_INVALID_MEM_OBJECT;
     }
     let t = object_dispatch(memobj);
-    call_by_slot(t, 83, &[memobj as usize, pfn_notify as usize, user_data as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clSetMemObjectDestructorCallback"), &[memobj as usize, pfn_notify as usize, user_data as usize]) as cl_int
 }
-gen_entry!(clSetMemObjectDestructorCallback, 83, cl_int, (memobj: cl_mem, pfn_notify: *mut c_void, user_data: *mut c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clSetMemObjectDestructorCallback_disp);
+gen_entry!(clSetMemObjectDestructorCallback, crate::dispatch::slot_of("clSetMemObjectDestructorCallback"), cl_int, (memobj: cl_mem, pfn_notify: *mut c_void, user_data: *mut c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clSetMemObjectDestructorCallback_disp);
 
 // ── slot 84: clCreateUserEvent ──
 #[allow(clippy::too_many_arguments)]
@@ -897,9 +897,9 @@ pub unsafe extern "C" fn clCreateUserEvent_disp(context: cl_context, errcode_ret
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 84, &[context as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateUserEvent"), &[context as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateUserEvent, 84, *mut c_void, (context: cl_context, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7], clCreateUserEvent_disp);
+gen_entry!(clCreateUserEvent, crate::dispatch::slot_of("clCreateUserEvent"), *mut c_void, (context: cl_context, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7], clCreateUserEvent_disp);
 
 // ── slot 85: clSetUserEventStatus ──
 #[allow(clippy::too_many_arguments)]
@@ -908,9 +908,9 @@ pub unsafe extern "C" fn clSetUserEventStatus_disp(event: cl_event, execution_st
     return CL_INVALID_EVENT;
     }
     let t = object_dispatch(event);
-    call_by_slot(t, 85, &[event as usize, execution_status as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clSetUserEventStatus"), &[event as usize, execution_status as usize]) as cl_int
 }
-gen_entry!(clSetUserEventStatus, 85, cl_int, (event: cl_event, execution_status: cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7], clSetUserEventStatus_disp);
+gen_entry!(clSetUserEventStatus, crate::dispatch::slot_of("clSetUserEventStatus"), cl_int, (event: cl_event, execution_status: cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7], clSetUserEventStatus_disp);
 
 // ── slot 86: clEnqueueReadBufferRect ──
 #[allow(clippy::too_many_arguments)]
@@ -919,9 +919,9 @@ pub unsafe extern "C" fn clEnqueueReadBufferRect_disp(command_queue: cl_command_
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 86, &[command_queue as usize, buffer as usize, blocking_read as usize, buffer_origin as usize, host_origin as usize, region as usize, buffer_row_pitch as usize, buffer_slice_pitch as usize, host_row_pitch as usize, host_slice_pitch as usize, ptr as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueReadBufferRect"), &[command_queue as usize, buffer as usize, blocking_read as usize, buffer_origin as usize, host_origin as usize, region as usize, buffer_row_pitch as usize, buffer_slice_pitch as usize, host_row_pitch as usize, host_slice_pitch as usize, ptr as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueReadBufferRect, 86, cl_int, (command_queue: cl_command_queue, buffer: cl_mem, blocking_read: cl_bool, buffer_origin: *const usize, host_origin: *const usize, region: *const usize, buffer_row_pitch: usize, buffer_slice_pitch: usize, host_row_pitch: usize, host_slice_pitch: usize, ptr: *mut c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [], clEnqueueReadBufferRect_disp);
+gen_entry!(clEnqueueReadBufferRect, crate::dispatch::slot_of("clEnqueueReadBufferRect"), cl_int, (command_queue: cl_command_queue, buffer: cl_mem, blocking_read: cl_bool, buffer_origin: *const usize, host_origin: *const usize, region: *const usize, buffer_row_pitch: usize, buffer_slice_pitch: usize, host_row_pitch: usize, host_slice_pitch: usize, ptr: *mut c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [], clEnqueueReadBufferRect_disp);
 
 // ── slot 87: clEnqueueWriteBufferRect ──
 #[allow(clippy::too_many_arguments)]
@@ -930,9 +930,9 @@ pub unsafe extern "C" fn clEnqueueWriteBufferRect_disp(command_queue: cl_command
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 87, &[command_queue as usize, buffer as usize, blocking_write as usize, buffer_origin as usize, host_origin as usize, region as usize, buffer_row_pitch as usize, buffer_slice_pitch as usize, host_row_pitch as usize, host_slice_pitch as usize, ptr as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueWriteBufferRect"), &[command_queue as usize, buffer as usize, blocking_write as usize, buffer_origin as usize, host_origin as usize, region as usize, buffer_row_pitch as usize, buffer_slice_pitch as usize, host_row_pitch as usize, host_slice_pitch as usize, ptr as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueWriteBufferRect, 87, cl_int, (command_queue: cl_command_queue, buffer: cl_mem, blocking_write: cl_bool, buffer_origin: *const usize, host_origin: *const usize, region: *const usize, buffer_row_pitch: usize, buffer_slice_pitch: usize, host_row_pitch: usize, host_slice_pitch: usize, ptr: *const c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [], clEnqueueWriteBufferRect_disp);
+gen_entry!(clEnqueueWriteBufferRect, crate::dispatch::slot_of("clEnqueueWriteBufferRect"), cl_int, (command_queue: cl_command_queue, buffer: cl_mem, blocking_write: cl_bool, buffer_origin: *const usize, host_origin: *const usize, region: *const usize, buffer_row_pitch: usize, buffer_slice_pitch: usize, host_row_pitch: usize, host_slice_pitch: usize, ptr: *const c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [], clEnqueueWriteBufferRect_disp);
 
 // ── slot 88: clEnqueueCopyBufferRect ──
 #[allow(clippy::too_many_arguments)]
@@ -941,9 +941,9 @@ pub unsafe extern "C" fn clEnqueueCopyBufferRect_disp(command_queue: cl_command_
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 88, &[command_queue as usize, src_buffer as usize, dst_buffer as usize, src_origin as usize, dst_origin as usize, region as usize, src_row_pitch as usize, src_slice_pitch as usize, dst_row_pitch as usize, dst_slice_pitch as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueCopyBufferRect"), &[command_queue as usize, src_buffer as usize, dst_buffer as usize, src_origin as usize, dst_origin as usize, region as usize, src_row_pitch as usize, src_slice_pitch as usize, dst_row_pitch as usize, dst_slice_pitch as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueCopyBufferRect, 88, cl_int, (command_queue: cl_command_queue, src_buffer: cl_mem, dst_buffer: cl_mem, src_origin: *const usize, dst_origin: *const usize, region: *const usize, src_row_pitch: usize, src_slice_pitch: usize, dst_row_pitch: usize, dst_slice_pitch: usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [], clEnqueueCopyBufferRect_disp);
+gen_entry!(clEnqueueCopyBufferRect, crate::dispatch::slot_of("clEnqueueCopyBufferRect"), cl_int, (command_queue: cl_command_queue, src_buffer: cl_mem, dst_buffer: cl_mem, src_origin: *const usize, dst_origin: *const usize, region: *const usize, src_row_pitch: usize, src_slice_pitch: usize, dst_row_pitch: usize, dst_slice_pitch: usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [], clEnqueueCopyBufferRect_disp);
 
 // ── slot 89: clCreateSubDevicesEXT ──
 #[allow(clippy::too_many_arguments)]
@@ -952,9 +952,9 @@ pub unsafe extern "C" fn clCreateSubDevicesEXT_disp(in_device: cl_device_id, pro
     return CL_INVALID_DEVICE;
     }
     let t = object_dispatch(in_device);
-    call_by_slot(t, 89, &[in_device as usize, properties as usize, num_entries as usize, out_devices as usize, num_devices as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clCreateSubDevicesEXT"), &[in_device as usize, properties as usize, num_entries as usize, out_devices as usize, num_devices as usize]) as cl_int
 }
-gen_entry!(clCreateSubDevicesEXT, 89, cl_int, (in_device: cl_device_id, properties: *const c_void, num_entries: cl_uint, out_devices: *mut cl_device_id, num_devices: *mut cl_uint), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateSubDevicesEXT_disp);
+gen_entry!(clCreateSubDevicesEXT, crate::dispatch::slot_of("clCreateSubDevicesEXT"), cl_int, (in_device: cl_device_id, properties: *const c_void, num_entries: cl_uint, out_devices: *mut cl_device_id, num_devices: *mut cl_uint), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateSubDevicesEXT_disp);
 
 // ── slot 90: clRetainDeviceEXT ──
 #[allow(clippy::too_many_arguments)]
@@ -963,9 +963,9 @@ pub unsafe extern "C" fn clRetainDeviceEXT_disp(device: cl_device_id) -> cl_int 
     return CL_INVALID_DEVICE;
     }
     let t = object_dispatch(device);
-    call_by_slot(t, 90, &[device as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clRetainDeviceEXT"), &[device as usize]) as cl_int
 }
-gen_entry!(clRetainDeviceEXT, 90, cl_int, (device: cl_device_id), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainDeviceEXT_disp);
+gen_entry!(clRetainDeviceEXT, crate::dispatch::slot_of("clRetainDeviceEXT"), cl_int, (device: cl_device_id), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainDeviceEXT_disp);
 
 // ── slot 91: clReleaseDeviceEXT ──
 #[allow(clippy::too_many_arguments)]
@@ -974,9 +974,9 @@ pub unsafe extern "C" fn clReleaseDeviceEXT_disp(device: cl_device_id) -> cl_int
     return CL_INVALID_DEVICE;
     }
     let t = object_dispatch(device);
-    call_by_slot(t, 91, &[device as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clReleaseDeviceEXT"), &[device as usize]) as cl_int
 }
-gen_entry!(clReleaseDeviceEXT, 91, cl_int, (device: cl_device_id), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseDeviceEXT_disp);
+gen_entry!(clReleaseDeviceEXT, crate::dispatch::slot_of("clReleaseDeviceEXT"), cl_int, (device: cl_device_id), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseDeviceEXT_disp);
 
 // ── slot 92: clCreateEventFromGLsyncKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -986,9 +986,9 @@ pub unsafe extern "C" fn clCreateEventFromGLsyncKHR_disp(context: cl_context, cl
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 92, &[context as usize, cl_GLsync as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateEventFromGLsyncKHR"), &[context as usize, cl_GLsync as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateEventFromGLsyncKHR, 92, *mut c_void, (context: cl_context, cl_GLsync: usize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clCreateEventFromGLsyncKHR_disp);
+gen_entry!(clCreateEventFromGLsyncKHR, crate::dispatch::slot_of("clCreateEventFromGLsyncKHR"), *mut c_void, (context: cl_context, cl_GLsync: usize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clCreateEventFromGLsyncKHR_disp);
 
 // ── slot 93: clCreateSubDevices ──
 #[allow(clippy::too_many_arguments)]
@@ -997,9 +997,9 @@ pub unsafe extern "C" fn clCreateSubDevices_disp(in_device: cl_device_id, proper
     return CL_INVALID_DEVICE;
     }
     let t = object_dispatch(in_device);
-    call_by_slot(t, 93, &[in_device as usize, properties as usize, num_devices as usize, out_devices as usize, num_devices_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clCreateSubDevices"), &[in_device as usize, properties as usize, num_devices as usize, out_devices as usize, num_devices_ret as usize]) as cl_int
 }
-gen_entry!(clCreateSubDevices, 93, cl_int, (in_device: cl_device_id, properties: *const isize, num_devices: cl_uint, out_devices: *mut cl_device_id, num_devices_ret: *mut cl_uint), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateSubDevices_disp);
+gen_entry!(clCreateSubDevices, crate::dispatch::slot_of("clCreateSubDevices"), cl_int, (in_device: cl_device_id, properties: *const isize, num_devices: cl_uint, out_devices: *mut cl_device_id, num_devices_ret: *mut cl_uint), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateSubDevices_disp);
 
 // ── slot 94: clRetainDevice ──
 #[allow(clippy::too_many_arguments)]
@@ -1008,9 +1008,9 @@ pub unsafe extern "C" fn clRetainDevice_disp(device: cl_device_id) -> cl_int {
     return CL_INVALID_DEVICE;
     }
     let t = object_dispatch(device);
-    call_by_slot(t, 94, &[device as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clRetainDevice"), &[device as usize]) as cl_int
 }
-gen_entry!(clRetainDevice, 94, cl_int, (device: cl_device_id), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainDevice_disp);
+gen_entry!(clRetainDevice, crate::dispatch::slot_of("clRetainDevice"), cl_int, (device: cl_device_id), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clRetainDevice_disp);
 
 // ── slot 95: clReleaseDevice ──
 #[allow(clippy::too_many_arguments)]
@@ -1019,9 +1019,9 @@ pub unsafe extern "C" fn clReleaseDevice_disp(device: cl_device_id) -> cl_int {
     return CL_INVALID_DEVICE;
     }
     let t = object_dispatch(device);
-    call_by_slot(t, 95, &[device as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clReleaseDevice"), &[device as usize]) as cl_int
 }
-gen_entry!(clReleaseDevice, 95, cl_int, (device: cl_device_id), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseDevice_disp);
+gen_entry!(clReleaseDevice, crate::dispatch::slot_of("clReleaseDevice"), cl_int, (device: cl_device_id), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7,__pad8], clReleaseDevice_disp);
 
 // ── slot 96: clCreateImage ──
 #[allow(clippy::too_many_arguments)]
@@ -1031,9 +1031,9 @@ pub unsafe extern "C" fn clCreateImage_disp(context: cl_context, flags: u64, ima
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 96, &[context as usize, val(&flags), image_format as usize, image_desc as usize, host_ptr as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateImage"), &[context as usize, val(&flags), image_format as usize, image_desc as usize, host_ptr as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateImage, 96, *mut c_void, (context: cl_context, flags: u64, image_format: *const c_void, image_desc: *const c_void, host_ptr: *mut c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3], clCreateImage_disp);
+gen_entry!(clCreateImage, crate::dispatch::slot_of("clCreateImage"), *mut c_void, (context: cl_context, flags: u64, image_format: *const c_void, image_desc: *const c_void, host_ptr: *mut c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3], clCreateImage_disp);
 
 // ── slot 97: clCreateProgramWithBuiltInKernels ──
 #[allow(clippy::too_many_arguments)]
@@ -1043,9 +1043,9 @@ pub unsafe extern "C" fn clCreateProgramWithBuiltInKernels_disp(context: cl_cont
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 97, &[context as usize, num_devices as usize, device_list as usize, kernel_names as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateProgramWithBuiltInKernels"), &[context as usize, num_devices as usize, device_list as usize, kernel_names as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateProgramWithBuiltInKernels, 97, *mut c_void, (context: cl_context, num_devices: cl_uint, device_list: *const cl_device_id, kernel_names: *const c_char, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateProgramWithBuiltInKernels_disp);
+gen_entry!(clCreateProgramWithBuiltInKernels, crate::dispatch::slot_of("clCreateProgramWithBuiltInKernels"), *mut c_void, (context: cl_context, num_devices: cl_uint, device_list: *const cl_device_id, kernel_names: *const c_char, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateProgramWithBuiltInKernels_disp);
 
 // ── slot 98: clCompileProgram ──
 #[allow(clippy::too_many_arguments)]
@@ -1054,9 +1054,9 @@ pub unsafe extern "C" fn clCompileProgram_disp(program: cl_program, num_devices:
     return CL_INVALID_PROGRAM;
     }
     let t = object_dispatch(program);
-    call_by_slot(t, 98, &[program as usize, num_devices as usize, device_list as usize, options as usize, num_input_headers as usize, input_headers as usize, header_include_names as usize, pfn_notify as usize, user_data as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clCompileProgram"), &[program as usize, num_devices as usize, device_list as usize, options as usize, num_input_headers as usize, input_headers as usize, header_include_names as usize, pfn_notify as usize, user_data as usize]) as cl_int
 }
-gen_entry!(clCompileProgram, 98, cl_int, (program: cl_program, num_devices: cl_uint, device_list: *const cl_device_id, options: *const c_char, num_input_headers: cl_uint, input_headers: *const cl_program, header_include_names: *const *mut c_char, pfn_notify: *mut c_void, user_data: *mut c_void), [__pad0], clCompileProgram_disp);
+gen_entry!(clCompileProgram, crate::dispatch::slot_of("clCompileProgram"), cl_int, (program: cl_program, num_devices: cl_uint, device_list: *const cl_device_id, options: *const c_char, num_input_headers: cl_uint, input_headers: *const cl_program, header_include_names: *const *mut c_char, pfn_notify: *mut c_void, user_data: *mut c_void), [__pad0], clCompileProgram_disp);
 
 // ── slot 99: clLinkProgram ──
 #[allow(clippy::too_many_arguments)]
@@ -1066,9 +1066,9 @@ pub unsafe extern "C" fn clLinkProgram_disp(context: cl_context, num_devices: cl
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 99, &[context as usize, num_devices as usize, device_list as usize, options as usize, num_input_programs as usize, input_programs as usize, pfn_notify as usize, user_data as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clLinkProgram"), &[context as usize, num_devices as usize, device_list as usize, options as usize, num_input_programs as usize, input_programs as usize, pfn_notify as usize, user_data as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clLinkProgram, 99, *mut c_void, (context: cl_context, num_devices: cl_uint, device_list: *const cl_device_id, options: *const c_char, num_input_programs: cl_uint, input_programs: *const cl_program, pfn_notify: *mut c_void, user_data: *mut c_void, errcode_ret: *mut cl_int), [__pad0], clLinkProgram_disp);
+gen_entry!(clLinkProgram, crate::dispatch::slot_of("clLinkProgram"), *mut c_void, (context: cl_context, num_devices: cl_uint, device_list: *const cl_device_id, options: *const c_char, num_input_programs: cl_uint, input_programs: *const cl_program, pfn_notify: *mut c_void, user_data: *mut c_void, errcode_ret: *mut cl_int), [__pad0], clLinkProgram_disp);
 
 // ── slot 101: clGetKernelArgInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -1077,9 +1077,9 @@ pub unsafe extern "C" fn clGetKernelArgInfo_disp(kernel: cl_kernel, arg_indx: cl
     return CL_INVALID_KERNEL;
     }
     let t = object_dispatch(kernel);
-    call_by_slot(t, 101, &[kernel as usize, arg_indx as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetKernelArgInfo"), &[kernel as usize, arg_indx as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
 }
-gen_entry!(clGetKernelArgInfo, 101, cl_int, (kernel: cl_kernel, arg_indx: cl_uint, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3], clGetKernelArgInfo_disp);
+gen_entry!(clGetKernelArgInfo, crate::dispatch::slot_of("clGetKernelArgInfo"), cl_int, (kernel: cl_kernel, arg_indx: cl_uint, param_name: u32, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3], clGetKernelArgInfo_disp);
 
 // ── slot 102: clEnqueueFillBuffer ──
 #[allow(clippy::too_many_arguments)]
@@ -1088,9 +1088,9 @@ pub unsafe extern "C" fn clEnqueueFillBuffer_disp(command_queue: cl_command_queu
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 102, &[command_queue as usize, buffer as usize, pattern as usize, pattern_size as usize, offset as usize, size as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueFillBuffer"), &[command_queue as usize, buffer as usize, pattern as usize, pattern_size as usize, offset as usize, size as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueFillBuffer, 102, cl_int, (command_queue: cl_command_queue, buffer: cl_mem, pattern: *const c_void, pattern_size: usize, offset: usize, size: usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0], clEnqueueFillBuffer_disp);
+gen_entry!(clEnqueueFillBuffer, crate::dispatch::slot_of("clEnqueueFillBuffer"), cl_int, (command_queue: cl_command_queue, buffer: cl_mem, pattern: *const c_void, pattern_size: usize, offset: usize, size: usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0], clEnqueueFillBuffer_disp);
 
 // ── slot 103: clEnqueueFillImage ──
 #[allow(clippy::too_many_arguments)]
@@ -1099,9 +1099,9 @@ pub unsafe extern "C" fn clEnqueueFillImage_disp(command_queue: cl_command_queue
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 103, &[command_queue as usize, image as usize, fill_color as usize, unnamed as usize, unnamed1 as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueFillImage"), &[command_queue as usize, image as usize, fill_color as usize, unnamed as usize, unnamed1 as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueFillImage, 103, cl_int, (command_queue: cl_command_queue, image: cl_mem, fill_color: *const c_void, unnamed: *const usize, unnamed1: *const usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1], clEnqueueFillImage_disp);
+gen_entry!(clEnqueueFillImage, crate::dispatch::slot_of("clEnqueueFillImage"), cl_int, (command_queue: cl_command_queue, image: cl_mem, fill_color: *const c_void, unnamed: *const usize, unnamed1: *const usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1], clEnqueueFillImage_disp);
 
 // ── slot 104: clEnqueueMigrateMemObjects ──
 #[allow(clippy::too_many_arguments)]
@@ -1110,9 +1110,9 @@ pub unsafe extern "C" fn clEnqueueMigrateMemObjects_disp(command_queue: cl_comma
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 104, &[command_queue as usize, num_mem_objects as usize, mem_objects as usize, val(&flags), num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueMigrateMemObjects"), &[command_queue as usize, num_mem_objects as usize, mem_objects as usize, val(&flags), num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueMigrateMemObjects, 104, cl_int, (command_queue: cl_command_queue, num_mem_objects: cl_uint, mem_objects: *const cl_mem, flags: u64, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2], clEnqueueMigrateMemObjects_disp);
+gen_entry!(clEnqueueMigrateMemObjects, crate::dispatch::slot_of("clEnqueueMigrateMemObjects"), cl_int, (command_queue: cl_command_queue, num_mem_objects: cl_uint, mem_objects: *const cl_mem, flags: u64, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2], clEnqueueMigrateMemObjects_disp);
 
 // ── slot 105: clEnqueueMarkerWithWaitList ──
 #[allow(clippy::too_many_arguments)]
@@ -1121,9 +1121,9 @@ pub unsafe extern "C" fn clEnqueueMarkerWithWaitList_disp(command_queue: cl_comm
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 105, &[command_queue as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueMarkerWithWaitList"), &[command_queue as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueMarkerWithWaitList, 105, cl_int, (command_queue: cl_command_queue, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clEnqueueMarkerWithWaitList_disp);
+gen_entry!(clEnqueueMarkerWithWaitList, crate::dispatch::slot_of("clEnqueueMarkerWithWaitList"), cl_int, (command_queue: cl_command_queue, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clEnqueueMarkerWithWaitList_disp);
 
 // ── slot 106: clEnqueueBarrierWithWaitList ──
 #[allow(clippy::too_many_arguments)]
@@ -1132,9 +1132,9 @@ pub unsafe extern "C" fn clEnqueueBarrierWithWaitList_disp(command_queue: cl_com
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 106, &[command_queue as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueBarrierWithWaitList"), &[command_queue as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueBarrierWithWaitList, 106, cl_int, (command_queue: cl_command_queue, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clEnqueueBarrierWithWaitList_disp);
+gen_entry!(clEnqueueBarrierWithWaitList, crate::dispatch::slot_of("clEnqueueBarrierWithWaitList"), cl_int, (command_queue: cl_command_queue, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clEnqueueBarrierWithWaitList_disp);
 
 // ── slot 107: clGetExtensionFunctionAddressForPlatform ──
 #[allow(clippy::too_many_arguments)]
@@ -1158,9 +1158,9 @@ pub unsafe extern "C" fn clGetExtensionFunctionAddressForPlatform_disp(platform:
         return core::ptr::null_mut();
         }
     };
-    call_by_slot(t, 107, &[platform as usize, func_name as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clGetExtensionFunctionAddressForPlatform"), &[platform as usize, func_name as usize]) as *mut c_void
 }
-gen_entry!(clGetExtensionFunctionAddressForPlatform, 107, *mut c_void, (platform: cl_platform_id, func_name: *const c_char), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7], clGetExtensionFunctionAddressForPlatform_disp);
+gen_entry!(clGetExtensionFunctionAddressForPlatform, crate::dispatch::slot_of("clGetExtensionFunctionAddressForPlatform"), *mut c_void, (platform: cl_platform_id, func_name: *const c_char), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7], clGetExtensionFunctionAddressForPlatform_disp);
 
 // ── slot 108: clCreateFromGLTexture ──
 #[allow(clippy::too_many_arguments)]
@@ -1170,9 +1170,9 @@ pub unsafe extern "C" fn clCreateFromGLTexture_disp(context: cl_context, flags: 
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 108, &[context as usize, val(&flags), target as usize, miplevel as usize, texture as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateFromGLTexture"), &[context as usize, val(&flags), target as usize, miplevel as usize, texture as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateFromGLTexture, 108, *mut c_void, (context: cl_context, flags: u64, target: u32, miplevel: i32, texture: u32, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3], clCreateFromGLTexture_disp);
+gen_entry!(clCreateFromGLTexture, crate::dispatch::slot_of("clCreateFromGLTexture"), *mut c_void, (context: cl_context, flags: u64, target: u32, miplevel: i32, texture: u32, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3], clCreateFromGLTexture_disp);
 
 // ── slot 109: clGetDeviceIDsFromD3D11KHR ──
 #[allow(clippy::too_many_arguments)]
@@ -1188,9 +1188,9 @@ pub unsafe extern "C" fn clGetDeviceIDsFromD3D11KHR_disp(platform: cl_platform_i
         return CL_INVALID_PLATFORM;
         }
     };
-    call_by_slot(t, 109, &[platform as usize, d3d_device_source as usize, d3d_object as usize, d3d_device_set as usize, num_entries as usize, devices as usize, num_devices as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetDeviceIDsFromD3D11KHR"), &[platform as usize, d3d_device_source as usize, d3d_object as usize, d3d_device_set as usize, num_entries as usize, devices as usize, num_devices as usize]) as cl_int
 }
-gen_entry!(clGetDeviceIDsFromD3D11KHR, 109, cl_int, (platform: cl_platform_id, d3d_device_source: usize, d3d_object: *mut c_void, d3d_device_set: usize, num_entries: cl_uint, devices: *mut cl_device_id, num_devices: *mut cl_uint), [__pad0,__pad1,__pad2], clGetDeviceIDsFromD3D11KHR_disp);
+gen_entry!(clGetDeviceIDsFromD3D11KHR, crate::dispatch::slot_of("clGetDeviceIDsFromD3D11KHR"), cl_int, (platform: cl_platform_id, d3d_device_source: usize, d3d_object: *mut c_void, d3d_device_set: usize, num_entries: cl_uint, devices: *mut cl_device_id, num_devices: *mut cl_uint), [__pad0,__pad1,__pad2], clGetDeviceIDsFromD3D11KHR_disp);
 
 // ── slot 110: clCreateFromD3D11BufferKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -1200,9 +1200,9 @@ pub unsafe extern "C" fn clCreateFromD3D11BufferKHR_disp(context: cl_context, fl
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 110, &[context as usize, val(&flags), resource as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateFromD3D11BufferKHR"), &[context as usize, val(&flags), resource as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateFromD3D11BufferKHR, 110, *mut c_void, (context: cl_context, flags: u64, resource: *mut c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateFromD3D11BufferKHR_disp);
+gen_entry!(clCreateFromD3D11BufferKHR, crate::dispatch::slot_of("clCreateFromD3D11BufferKHR"), *mut c_void, (context: cl_context, flags: u64, resource: *mut c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateFromD3D11BufferKHR_disp);
 
 // ── slot 111: clCreateFromD3D11Texture2DKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -1212,9 +1212,9 @@ pub unsafe extern "C" fn clCreateFromD3D11Texture2DKHR_disp(context: cl_context,
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 111, &[context as usize, val(&flags), resource as usize, subresource as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateFromD3D11Texture2DKHR"), &[context as usize, val(&flags), resource as usize, subresource as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateFromD3D11Texture2DKHR, 111, *mut c_void, (context: cl_context, flags: u64, resource: *mut c_void, subresource: usize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateFromD3D11Texture2DKHR_disp);
+gen_entry!(clCreateFromD3D11Texture2DKHR, crate::dispatch::slot_of("clCreateFromD3D11Texture2DKHR"), *mut c_void, (context: cl_context, flags: u64, resource: *mut c_void, subresource: usize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateFromD3D11Texture2DKHR_disp);
 
 // ── slot 112: clCreateFromD3D11Texture3DKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -1224,9 +1224,9 @@ pub unsafe extern "C" fn clCreateFromD3D11Texture3DKHR_disp(context: cl_context,
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 112, &[context as usize, val(&flags), resource as usize, subresource as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateFromD3D11Texture3DKHR"), &[context as usize, val(&flags), resource as usize, subresource as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateFromD3D11Texture3DKHR, 112, *mut c_void, (context: cl_context, flags: u64, resource: *mut c_void, subresource: usize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateFromD3D11Texture3DKHR_disp);
+gen_entry!(clCreateFromD3D11Texture3DKHR, crate::dispatch::slot_of("clCreateFromD3D11Texture3DKHR"), *mut c_void, (context: cl_context, flags: u64, resource: *mut c_void, subresource: usize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4], clCreateFromD3D11Texture3DKHR_disp);
 
 // ── slot 113: clCreateFromDX9MediaSurfaceKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -1236,9 +1236,9 @@ pub unsafe extern "C" fn clCreateFromDX9MediaSurfaceKHR_disp(context: cl_context
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 113, &[context as usize, val(&flags), adapter_type as usize, surface_info as usize, plane as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateFromDX9MediaSurfaceKHR"), &[context as usize, val(&flags), adapter_type as usize, surface_info as usize, plane as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateFromDX9MediaSurfaceKHR, 113, *mut c_void, (context: cl_context, flags: u64, adapter_type: usize, surface_info: *mut c_void, plane: cl_uint, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3], clCreateFromDX9MediaSurfaceKHR_disp);
+gen_entry!(clCreateFromDX9MediaSurfaceKHR, crate::dispatch::slot_of("clCreateFromDX9MediaSurfaceKHR"), *mut c_void, (context: cl_context, flags: u64, adapter_type: usize, surface_info: *mut c_void, plane: cl_uint, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3], clCreateFromDX9MediaSurfaceKHR_disp);
 
 // ── slot 114: clEnqueueAcquireD3D11ObjectsKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -1247,9 +1247,9 @@ pub unsafe extern "C" fn clEnqueueAcquireD3D11ObjectsKHR_disp(command_queue: cl_
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 114, &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueAcquireD3D11ObjectsKHR"), &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueAcquireD3D11ObjectsKHR, 114, cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueAcquireD3D11ObjectsKHR_disp);
+gen_entry!(clEnqueueAcquireD3D11ObjectsKHR, crate::dispatch::slot_of("clEnqueueAcquireD3D11ObjectsKHR"), cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueAcquireD3D11ObjectsKHR_disp);
 
 // ── slot 115: clEnqueueReleaseD3D11ObjectsKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -1258,9 +1258,9 @@ pub unsafe extern "C" fn clEnqueueReleaseD3D11ObjectsKHR_disp(command_queue: cl_
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 115, &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueReleaseD3D11ObjectsKHR"), &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueReleaseD3D11ObjectsKHR, 115, cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueReleaseD3D11ObjectsKHR_disp);
+gen_entry!(clEnqueueReleaseD3D11ObjectsKHR, crate::dispatch::slot_of("clEnqueueReleaseD3D11ObjectsKHR"), cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueReleaseD3D11ObjectsKHR_disp);
 
 // ── slot 116: clGetDeviceIDsFromDX9MediaAdapterKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -1276,9 +1276,9 @@ pub unsafe extern "C" fn clGetDeviceIDsFromDX9MediaAdapterKHR_disp(platform: cl_
         return CL_INVALID_PLATFORM;
         }
     };
-    call_by_slot(t, 116, &[platform as usize, num_media_adapters as usize, media_adapter_type as usize, media_adapters as usize, media_adapter_set as usize, num_entries as usize, devices as usize, num_devices as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetDeviceIDsFromDX9MediaAdapterKHR"), &[platform as usize, num_media_adapters as usize, media_adapter_type as usize, media_adapters as usize, media_adapter_set as usize, num_entries as usize, devices as usize, num_devices as usize]) as cl_int
 }
-gen_entry!(clGetDeviceIDsFromDX9MediaAdapterKHR, 116, cl_int, (platform: cl_platform_id, num_media_adapters: cl_uint, media_adapter_type: *mut c_void, media_adapters: *mut c_void, media_adapter_set: usize, num_entries: cl_uint, devices: *mut cl_device_id, num_devices: *mut cl_uint), [__pad0,__pad1], clGetDeviceIDsFromDX9MediaAdapterKHR_disp);
+gen_entry!(clGetDeviceIDsFromDX9MediaAdapterKHR, crate::dispatch::slot_of("clGetDeviceIDsFromDX9MediaAdapterKHR"), cl_int, (platform: cl_platform_id, num_media_adapters: cl_uint, media_adapter_type: *mut c_void, media_adapters: *mut c_void, media_adapter_set: usize, num_entries: cl_uint, devices: *mut cl_device_id, num_devices: *mut cl_uint), [__pad0,__pad1], clGetDeviceIDsFromDX9MediaAdapterKHR_disp);
 
 // ── slot 117: clEnqueueAcquireDX9MediaSurfacesKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -1287,9 +1287,9 @@ pub unsafe extern "C" fn clEnqueueAcquireDX9MediaSurfacesKHR_disp(command_queue:
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 117, &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueAcquireDX9MediaSurfacesKHR"), &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueAcquireDX9MediaSurfacesKHR, 117, cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueAcquireDX9MediaSurfacesKHR_disp);
+gen_entry!(clEnqueueAcquireDX9MediaSurfacesKHR, crate::dispatch::slot_of("clEnqueueAcquireDX9MediaSurfacesKHR"), cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueAcquireDX9MediaSurfacesKHR_disp);
 
 // ── slot 118: clEnqueueReleaseDX9MediaSurfacesKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -1298,9 +1298,9 @@ pub unsafe extern "C" fn clEnqueueReleaseDX9MediaSurfacesKHR_disp(command_queue:
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 118, &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueReleaseDX9MediaSurfacesKHR"), &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueReleaseDX9MediaSurfacesKHR, 118, cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *mut cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueReleaseDX9MediaSurfacesKHR_disp);
+gen_entry!(clEnqueueReleaseDX9MediaSurfacesKHR, crate::dispatch::slot_of("clEnqueueReleaseDX9MediaSurfacesKHR"), cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *mut cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueReleaseDX9MediaSurfacesKHR_disp);
 
 // ── slot 119: clCreateFromEGLImageKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -1310,9 +1310,9 @@ pub unsafe extern "C" fn clCreateFromEGLImageKHR_disp(context: cl_context, egldi
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 119, &[context as usize, egldisplay as usize, eglimage as usize, val(&flags), properties as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateFromEGLImageKHR"), &[context as usize, egldisplay as usize, eglimage as usize, val(&flags), properties as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateFromEGLImageKHR, 119, *mut c_void, (context: cl_context, egldisplay: usize, eglimage: usize, flags: u64, properties: *const c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3], clCreateFromEGLImageKHR_disp);
+gen_entry!(clCreateFromEGLImageKHR, crate::dispatch::slot_of("clCreateFromEGLImageKHR"), *mut c_void, (context: cl_context, egldisplay: usize, eglimage: usize, flags: u64, properties: *const c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3], clCreateFromEGLImageKHR_disp);
 
 // ── slot 120: clEnqueueAcquireEGLObjectsKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -1321,9 +1321,9 @@ pub unsafe extern "C" fn clEnqueueAcquireEGLObjectsKHR_disp(command_queue: cl_co
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 120, &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueAcquireEGLObjectsKHR"), &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueAcquireEGLObjectsKHR, 120, cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueAcquireEGLObjectsKHR_disp);
+gen_entry!(clEnqueueAcquireEGLObjectsKHR, crate::dispatch::slot_of("clEnqueueAcquireEGLObjectsKHR"), cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueAcquireEGLObjectsKHR_disp);
 
 // ── slot 121: clEnqueueReleaseEGLObjectsKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -1332,9 +1332,9 @@ pub unsafe extern "C" fn clEnqueueReleaseEGLObjectsKHR_disp(command_queue: cl_co
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 121, &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueReleaseEGLObjectsKHR"), &[command_queue as usize, num_objects as usize, mem_objects as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueReleaseEGLObjectsKHR, 121, cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueReleaseEGLObjectsKHR_disp);
+gen_entry!(clEnqueueReleaseEGLObjectsKHR, crate::dispatch::slot_of("clEnqueueReleaseEGLObjectsKHR"), cl_int, (command_queue: cl_command_queue, num_objects: cl_uint, mem_objects: *const cl_mem, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3], clEnqueueReleaseEGLObjectsKHR_disp);
 
 // ── slot 122: clCreateEventFromEGLSyncKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -1344,9 +1344,9 @@ pub unsafe extern "C" fn clCreateEventFromEGLSyncKHR_disp(context: cl_context, s
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 122, &[context as usize, sync as usize, display as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateEventFromEGLSyncKHR"), &[context as usize, sync as usize, display as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateEventFromEGLSyncKHR, 122, *mut c_void, (context: cl_context, sync: usize, display: usize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateEventFromEGLSyncKHR_disp);
+gen_entry!(clCreateEventFromEGLSyncKHR, crate::dispatch::slot_of("clCreateEventFromEGLSyncKHR"), *mut c_void, (context: cl_context, sync: usize, display: usize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateEventFromEGLSyncKHR_disp);
 
 // ── slot 123: clCreateCommandQueueWithProperties ──
 #[allow(clippy::too_many_arguments)]
@@ -1356,9 +1356,9 @@ pub unsafe extern "C" fn clCreateCommandQueueWithProperties_disp(context: cl_con
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 123, &[context as usize, device as usize, properties as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateCommandQueueWithProperties"), &[context as usize, device as usize, properties as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateCommandQueueWithProperties, 123, *mut c_void, (context: cl_context, device: cl_device_id, properties: *const c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateCommandQueueWithProperties_disp);
+gen_entry!(clCreateCommandQueueWithProperties, crate::dispatch::slot_of("clCreateCommandQueueWithProperties"), *mut c_void, (context: cl_context, device: cl_device_id, properties: *const c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateCommandQueueWithProperties_disp);
 
 // ── slot 124: clCreatePipe ──
 #[allow(clippy::too_many_arguments)]
@@ -1368,9 +1368,9 @@ pub unsafe extern "C" fn clCreatePipe_disp(context: cl_context, flags: u64, pipe
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 124, &[context as usize, val(&flags), pipe_packet_size as usize, pipe_max_packets as usize, properties as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreatePipe"), &[context as usize, val(&flags), pipe_packet_size as usize, pipe_max_packets as usize, properties as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreatePipe, 124, *mut c_void, (context: cl_context, flags: u64, pipe_packet_size: cl_uint, pipe_max_packets: cl_uint, properties: *const isize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3], clCreatePipe_disp);
+gen_entry!(clCreatePipe, crate::dispatch::slot_of("clCreatePipe"), *mut c_void, (context: cl_context, flags: u64, pipe_packet_size: cl_uint, pipe_max_packets: cl_uint, properties: *const isize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3], clCreatePipe_disp);
 
 // ── slot 125: clGetPipeInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -1379,9 +1379,9 @@ pub unsafe extern "C" fn clGetPipeInfo_disp(pipe: cl_mem, param_name: usize, par
     return CL_INVALID_MEM_OBJECT;
     }
     let t = object_dispatch(pipe);
-    call_by_slot(t, 125, &[pipe as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetPipeInfo"), &[pipe as usize, param_name as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
 }
-gen_entry!(clGetPipeInfo, 125, cl_int, (pipe: cl_mem, param_name: usize, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetPipeInfo_disp);
+gen_entry!(clGetPipeInfo, crate::dispatch::slot_of("clGetPipeInfo"), cl_int, (pipe: cl_mem, param_name: usize, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1,__pad2,__pad3,__pad4], clGetPipeInfo_disp);
 
 // ── slot 126: clSVMAlloc ──
 #[allow(clippy::too_many_arguments)]
@@ -1390,9 +1390,9 @@ pub unsafe extern "C" fn clSVMAlloc_disp(context: cl_context, flags: u64, size: 
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 126, &[context as usize, val(&flags), size as usize, alignment as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clSVMAlloc"), &[context as usize, val(&flags), size as usize, alignment as usize]) as *mut c_void
 }
-gen_entry!(clSVMAlloc, 126, *mut c_void, (context: cl_context, flags: u64, size: usize, alignment: cl_uint), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clSVMAlloc_disp);
+gen_entry!(clSVMAlloc, crate::dispatch::slot_of("clSVMAlloc"), *mut c_void, (context: cl_context, flags: u64, size: usize, alignment: cl_uint), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clSVMAlloc_disp);
 
 // ── slot 127: clSVMFree ──
 #[allow(clippy::too_many_arguments)]
@@ -1401,9 +1401,9 @@ pub unsafe extern "C" fn clSVMFree_disp(context: cl_context, svm_pointer: *mut c
     return;
     }
     let t = object_dispatch(context);
-    call_by_slot_void(t, 127, &[context as usize, svm_pointer as usize]);
+    call_by_slot_void(t, crate::dispatch::slot_of("clSVMFree"), &[context as usize, svm_pointer as usize]);
 }
-gen_entry!(clSVMFree, 127, (), (context: cl_context, svm_pointer: *mut c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7], clSVMFree_disp);
+gen_entry!(clSVMFree, crate::dispatch::slot_of("clSVMFree"), (), (context: cl_context, svm_pointer: *mut c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7], clSVMFree_disp);
 
 // ── slot 128: clEnqueueSVMFree ──
 #[allow(clippy::too_many_arguments)]
@@ -1412,9 +1412,9 @@ pub unsafe extern "C" fn clEnqueueSVMFree_disp(command_queue: cl_command_queue, 
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 128, &[command_queue as usize, num_svm_pointers as usize, unnamed as usize, pfn_free_func as usize, user_data as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueSVMFree"), &[command_queue as usize, num_svm_pointers as usize, unnamed as usize, pfn_free_func as usize, user_data as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueSVMFree, 128, cl_int, (command_queue: cl_command_queue, num_svm_pointers: cl_uint, unnamed: *mut c_void, pfn_free_func: *mut c_void, user_data: *mut c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1], clEnqueueSVMFree_disp);
+gen_entry!(clEnqueueSVMFree, crate::dispatch::slot_of("clEnqueueSVMFree"), cl_int, (command_queue: cl_command_queue, num_svm_pointers: cl_uint, unnamed: *mut c_void, pfn_free_func: *mut c_void, user_data: *mut c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1], clEnqueueSVMFree_disp);
 
 // ── slot 129: clEnqueueSVMMemcpy ──
 #[allow(clippy::too_many_arguments)]
@@ -1423,9 +1423,9 @@ pub unsafe extern "C" fn clEnqueueSVMMemcpy_disp(command_queue: cl_command_queue
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 129, &[command_queue as usize, blocking_copy as usize, dst_ptr as usize, src_ptr as usize, size as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueSVMMemcpy"), &[command_queue as usize, blocking_copy as usize, dst_ptr as usize, src_ptr as usize, size as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueSVMMemcpy, 129, cl_int, (command_queue: cl_command_queue, blocking_copy: cl_bool, dst_ptr: *mut c_void, src_ptr: *const c_void, size: usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1], clEnqueueSVMMemcpy_disp);
+gen_entry!(clEnqueueSVMMemcpy, crate::dispatch::slot_of("clEnqueueSVMMemcpy"), cl_int, (command_queue: cl_command_queue, blocking_copy: cl_bool, dst_ptr: *mut c_void, src_ptr: *const c_void, size: usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1], clEnqueueSVMMemcpy_disp);
 
 // ── slot 130: clEnqueueSVMMemFill ──
 #[allow(clippy::too_many_arguments)]
@@ -1434,9 +1434,9 @@ pub unsafe extern "C" fn clEnqueueSVMMemFill_disp(command_queue: cl_command_queu
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 130, &[command_queue as usize, svm_ptr as usize, pattern as usize, pattern_size as usize, size as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueSVMMemFill"), &[command_queue as usize, svm_ptr as usize, pattern as usize, pattern_size as usize, size as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueSVMMemFill, 130, cl_int, (command_queue: cl_command_queue, svm_ptr: *mut c_void, pattern: *const c_void, pattern_size: usize, size: usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1], clEnqueueSVMMemFill_disp);
+gen_entry!(clEnqueueSVMMemFill, crate::dispatch::slot_of("clEnqueueSVMMemFill"), cl_int, (command_queue: cl_command_queue, svm_ptr: *mut c_void, pattern: *const c_void, pattern_size: usize, size: usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1], clEnqueueSVMMemFill_disp);
 
 // ── slot 131: clEnqueueSVMMap ──
 #[allow(clippy::too_many_arguments)]
@@ -1445,9 +1445,9 @@ pub unsafe extern "C" fn clEnqueueSVMMap_disp(command_queue: cl_command_queue, b
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 131, &[command_queue as usize, blocking_map as usize, val(&flags), svm_ptr as usize, size as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueSVMMap"), &[command_queue as usize, blocking_map as usize, val(&flags), svm_ptr as usize, size as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueSVMMap, 131, cl_int, (command_queue: cl_command_queue, blocking_map: cl_bool, flags: u64, svm_ptr: *mut c_void, size: usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1], clEnqueueSVMMap_disp);
+gen_entry!(clEnqueueSVMMap, crate::dispatch::slot_of("clEnqueueSVMMap"), cl_int, (command_queue: cl_command_queue, blocking_map: cl_bool, flags: u64, svm_ptr: *mut c_void, size: usize, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1], clEnqueueSVMMap_disp);
 
 // ── slot 132: clEnqueueSVMUnmap ──
 #[allow(clippy::too_many_arguments)]
@@ -1456,9 +1456,9 @@ pub unsafe extern "C" fn clEnqueueSVMUnmap_disp(command_queue: cl_command_queue,
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 132, &[command_queue as usize, svm_ptr as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueSVMUnmap"), &[command_queue as usize, svm_ptr as usize, num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueSVMUnmap, 132, cl_int, (command_queue: cl_command_queue, svm_ptr: *mut c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3,__pad4], clEnqueueSVMUnmap_disp);
+gen_entry!(clEnqueueSVMUnmap, crate::dispatch::slot_of("clEnqueueSVMUnmap"), cl_int, (command_queue: cl_command_queue, svm_ptr: *mut c_void, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1,__pad2,__pad3,__pad4], clEnqueueSVMUnmap_disp);
 
 // ── slot 133: clCreateSamplerWithProperties ──
 #[allow(clippy::too_many_arguments)]
@@ -1468,9 +1468,9 @@ pub unsafe extern "C" fn clCreateSamplerWithProperties_disp(context: cl_context,
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 133, &[context as usize, normalized_coords as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateSamplerWithProperties"), &[context as usize, normalized_coords as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateSamplerWithProperties, 133, *mut c_void, (context: cl_context, normalized_coords: *const isize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clCreateSamplerWithProperties_disp);
+gen_entry!(clCreateSamplerWithProperties, crate::dispatch::slot_of("clCreateSamplerWithProperties"), *mut c_void, (context: cl_context, normalized_coords: *const isize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clCreateSamplerWithProperties_disp);
 
 // ── slot 134: clSetKernelArgSVMPointer ──
 #[allow(clippy::too_many_arguments)]
@@ -1479,9 +1479,9 @@ pub unsafe extern "C" fn clSetKernelArgSVMPointer_disp(kernel: cl_kernel, arg_in
     return CL_INVALID_KERNEL;
     }
     let t = object_dispatch(kernel);
-    call_by_slot(t, 134, &[kernel as usize, arg_index as usize, arg_value as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clSetKernelArgSVMPointer"), &[kernel as usize, arg_index as usize, arg_value as usize]) as cl_int
 }
-gen_entry!(clSetKernelArgSVMPointer, 134, cl_int, (kernel: cl_kernel, arg_index: cl_uint, arg_value: *const c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clSetKernelArgSVMPointer_disp);
+gen_entry!(clSetKernelArgSVMPointer, crate::dispatch::slot_of("clSetKernelArgSVMPointer"), cl_int, (kernel: cl_kernel, arg_index: cl_uint, arg_value: *const c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clSetKernelArgSVMPointer_disp);
 
 // ── slot 135: clSetKernelExecInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -1490,9 +1490,9 @@ pub unsafe extern "C" fn clSetKernelExecInfo_disp(kernel: cl_kernel, param_name:
     return CL_INVALID_KERNEL;
     }
     let t = object_dispatch(kernel);
-    call_by_slot(t, 135, &[kernel as usize, param_name as usize, param_value_size as usize, param_value as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clSetKernelExecInfo"), &[kernel as usize, param_name as usize, param_value_size as usize, param_value as usize]) as cl_int
 }
-gen_entry!(clSetKernelExecInfo, 135, cl_int, (kernel: cl_kernel, param_name: usize, param_value_size: usize, param_value: *const c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clSetKernelExecInfo_disp);
+gen_entry!(clSetKernelExecInfo, crate::dispatch::slot_of("clSetKernelExecInfo"), cl_int, (kernel: cl_kernel, param_name: usize, param_value_size: usize, param_value: *const c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clSetKernelExecInfo_disp);
 
 // ── slot 136: clGetKernelSubGroupInfoKHR ──
 #[allow(clippy::too_many_arguments)]
@@ -1501,9 +1501,9 @@ pub unsafe extern "C" fn clGetKernelSubGroupInfoKHR_disp(in_kernel: cl_kernel, i
     return CL_INVALID_KERNEL;
     }
     let t = object_dispatch(in_kernel);
-    call_by_slot(t, 136, &[in_kernel as usize, in_device as usize, param_name as usize, input_value_size as usize, input_value as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetKernelSubGroupInfoKHR"), &[in_kernel as usize, in_device as usize, param_name as usize, input_value_size as usize, input_value as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
 }
-gen_entry!(clGetKernelSubGroupInfoKHR, 136, cl_int, (in_kernel: cl_kernel, in_device: cl_device_id, param_name: usize, input_value_size: usize, input_value: *const c_void, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1], clGetKernelSubGroupInfoKHR_disp);
+gen_entry!(clGetKernelSubGroupInfoKHR, crate::dispatch::slot_of("clGetKernelSubGroupInfoKHR"), cl_int, (in_kernel: cl_kernel, in_device: cl_device_id, param_name: usize, input_value_size: usize, input_value: *const c_void, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1], clGetKernelSubGroupInfoKHR_disp);
 
 // ── slot 137: clCloneKernel ──
 #[allow(clippy::too_many_arguments)]
@@ -1513,9 +1513,9 @@ pub unsafe extern "C" fn clCloneKernel_disp(source_kernel: cl_kernel, errcode_re
     return core::ptr::null_mut();
     }
     let t = object_dispatch(source_kernel);
-    call_by_slot(t, 137, &[source_kernel as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCloneKernel"), &[source_kernel as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCloneKernel, 137, *mut c_void, (source_kernel: cl_kernel, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7], clCloneKernel_disp);
+gen_entry!(clCloneKernel, crate::dispatch::slot_of("clCloneKernel"), *mut c_void, (source_kernel: cl_kernel, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7], clCloneKernel_disp);
 
 // ── slot 138: clCreateProgramWithIL ──
 #[allow(clippy::too_many_arguments)]
@@ -1525,9 +1525,9 @@ pub unsafe extern "C" fn clCreateProgramWithIL_disp(context: cl_context, il: *co
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 138, &[context as usize, il as usize, length as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateProgramWithIL"), &[context as usize, il as usize, length as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateProgramWithIL, 138, *mut c_void, (context: cl_context, il: *const c_void, length: usize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateProgramWithIL_disp);
+gen_entry!(clCreateProgramWithIL, crate::dispatch::slot_of("clCreateProgramWithIL"), *mut c_void, (context: cl_context, il: *const c_void, length: usize, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clCreateProgramWithIL_disp);
 
 // ── slot 139: clEnqueueSVMMigrateMem ──
 #[allow(clippy::too_many_arguments)]
@@ -1536,9 +1536,9 @@ pub unsafe extern "C" fn clEnqueueSVMMigrateMem_disp(command_queue: cl_command_q
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 139, &[command_queue as usize, num_svm_pointers as usize, svm_pointers as usize, sizes as usize, val(&flags), num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clEnqueueSVMMigrateMem"), &[command_queue as usize, num_svm_pointers as usize, svm_pointers as usize, sizes as usize, val(&flags), num_events_in_wait_list as usize, event_wait_list as usize, event as usize]) as cl_int
 }
-gen_entry!(clEnqueueSVMMigrateMem, 139, cl_int, (command_queue: cl_command_queue, num_svm_pointers: cl_uint, svm_pointers: *const *mut c_void, sizes: *const usize, flags: u64, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1], clEnqueueSVMMigrateMem_disp);
+gen_entry!(clEnqueueSVMMigrateMem, crate::dispatch::slot_of("clEnqueueSVMMigrateMem"), cl_int, (command_queue: cl_command_queue, num_svm_pointers: cl_uint, svm_pointers: *const *mut c_void, sizes: *const usize, flags: u64, num_events_in_wait_list: cl_uint, event_wait_list: *const cl_event, event: *mut cl_event), [__pad0,__pad1], clEnqueueSVMMigrateMem_disp);
 
 // ── slot 140: clGetDeviceAndHostTimer ──
 #[allow(clippy::too_many_arguments)]
@@ -1547,9 +1547,9 @@ pub unsafe extern "C" fn clGetDeviceAndHostTimer_disp(device: cl_device_id, devi
     return CL_INVALID_DEVICE;
     }
     let t = object_dispatch(device);
-    call_by_slot(t, 140, &[device as usize, device_timestamp as usize, host_timestamp as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetDeviceAndHostTimer"), &[device as usize, device_timestamp as usize, host_timestamp as usize]) as cl_int
 }
-gen_entry!(clGetDeviceAndHostTimer, 140, cl_int, (device: cl_device_id, device_timestamp: *mut u64, host_timestamp: *mut u64), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clGetDeviceAndHostTimer_disp);
+gen_entry!(clGetDeviceAndHostTimer, crate::dispatch::slot_of("clGetDeviceAndHostTimer"), cl_int, (device: cl_device_id, device_timestamp: *mut u64, host_timestamp: *mut u64), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clGetDeviceAndHostTimer_disp);
 
 // ── slot 141: clGetHostTimer ──
 #[allow(clippy::too_many_arguments)]
@@ -1558,9 +1558,9 @@ pub unsafe extern "C" fn clGetHostTimer_disp(device: cl_device_id, host_timestam
     return CL_INVALID_DEVICE;
     }
     let t = object_dispatch(device);
-    call_by_slot(t, 141, &[device as usize, host_timestamp as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetHostTimer"), &[device as usize, host_timestamp as usize]) as cl_int
 }
-gen_entry!(clGetHostTimer, 141, cl_int, (device: cl_device_id, host_timestamp: *mut u64), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7], clGetHostTimer_disp);
+gen_entry!(clGetHostTimer, crate::dispatch::slot_of("clGetHostTimer"), cl_int, (device: cl_device_id, host_timestamp: *mut u64), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6,__pad7], clGetHostTimer_disp);
 
 // ── slot 142: clGetKernelSubGroupInfo ──
 #[allow(clippy::too_many_arguments)]
@@ -1569,9 +1569,9 @@ pub unsafe extern "C" fn clGetKernelSubGroupInfo_disp(kernel: cl_kernel, device:
     return CL_INVALID_KERNEL;
     }
     let t = object_dispatch(kernel);
-    call_by_slot(t, 142, &[kernel as usize, device as usize, param_name as usize, input_value_size as usize, input_value as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetKernelSubGroupInfo"), &[kernel as usize, device as usize, param_name as usize, input_value_size as usize, input_value as usize, param_value_size as usize, param_value as usize, param_value_size_ret as usize]) as cl_int
 }
-gen_entry!(clGetKernelSubGroupInfo, 142, cl_int, (kernel: cl_kernel, device: cl_device_id, param_name: usize, input_value_size: usize, input_value: *const c_void, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1], clGetKernelSubGroupInfo_disp);
+gen_entry!(clGetKernelSubGroupInfo, crate::dispatch::slot_of("clGetKernelSubGroupInfo"), cl_int, (kernel: cl_kernel, device: cl_device_id, param_name: usize, input_value_size: usize, input_value: *const c_void, param_value_size: usize, param_value: *mut c_void, param_value_size_ret: *mut usize), [__pad0,__pad1], clGetKernelSubGroupInfo_disp);
 
 // ── slot 143: clSetDefaultDeviceCommandQueue ──
 #[allow(clippy::too_many_arguments)]
@@ -1580,9 +1580,9 @@ pub unsafe extern "C" fn clSetDefaultDeviceCommandQueue_disp(context: cl_context
     return CL_INVALID_CONTEXT;
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 143, &[context as usize, device as usize, command_queue as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clSetDefaultDeviceCommandQueue"), &[context as usize, device as usize, command_queue as usize]) as cl_int
 }
-gen_entry!(clSetDefaultDeviceCommandQueue, 143, cl_int, (context: cl_context, device: cl_device_id, command_queue: cl_command_queue), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clSetDefaultDeviceCommandQueue_disp);
+gen_entry!(clSetDefaultDeviceCommandQueue, crate::dispatch::slot_of("clSetDefaultDeviceCommandQueue"), cl_int, (context: cl_context, device: cl_device_id, command_queue: cl_command_queue), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clSetDefaultDeviceCommandQueue_disp);
 
 // ── slot 144: clSetProgramReleaseCallback ──
 #[allow(clippy::too_many_arguments)]
@@ -1591,9 +1591,9 @@ pub unsafe extern "C" fn clSetProgramReleaseCallback_disp(program: cl_program, p
     return CL_INVALID_PROGRAM;
     }
     let t = object_dispatch(program);
-    call_by_slot(t, 144, &[program as usize, pfn_notify as usize, user_data as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clSetProgramReleaseCallback"), &[program as usize, pfn_notify as usize, user_data as usize]) as cl_int
 }
-gen_entry!(clSetProgramReleaseCallback, 144, cl_int, (program: cl_program, pfn_notify: *mut c_void, user_data: *mut c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clSetProgramReleaseCallback_disp);
+gen_entry!(clSetProgramReleaseCallback, crate::dispatch::slot_of("clSetProgramReleaseCallback"), cl_int, (program: cl_program, pfn_notify: *mut c_void, user_data: *mut c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clSetProgramReleaseCallback_disp);
 
 // ── slot 145: clSetProgramSpecializationConstant ──
 #[allow(clippy::too_many_arguments)]
@@ -1602,9 +1602,9 @@ pub unsafe extern "C" fn clSetProgramSpecializationConstant_disp(program: cl_pro
     return CL_INVALID_PROGRAM;
     }
     let t = object_dispatch(program);
-    call_by_slot(t, 145, &[program as usize, spec_id as usize, spec_size as usize, spec_value as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clSetProgramSpecializationConstant"), &[program as usize, spec_id as usize, spec_size as usize, spec_value as usize]) as cl_int
 }
-gen_entry!(clSetProgramSpecializationConstant, 145, cl_int, (program: cl_program, spec_id: cl_uint, spec_size: usize, spec_value: *const c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clSetProgramSpecializationConstant_disp);
+gen_entry!(clSetProgramSpecializationConstant, crate::dispatch::slot_of("clSetProgramSpecializationConstant"), cl_int, (program: cl_program, spec_id: cl_uint, spec_size: usize, spec_value: *const c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5], clSetProgramSpecializationConstant_disp);
 
 // ── slot 146: clCreateBufferWithProperties ──
 #[allow(clippy::too_many_arguments)]
@@ -1614,9 +1614,9 @@ pub unsafe extern "C" fn clCreateBufferWithProperties_disp(context: cl_context, 
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 146, &[context as usize, properties as usize, val(&flags), size as usize, host_ptr as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateBufferWithProperties"), &[context as usize, properties as usize, val(&flags), size as usize, host_ptr as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateBufferWithProperties, 146, *mut c_void, (context: cl_context, properties: *const c_void, flags: u64, size: usize, host_ptr: *mut c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3], clCreateBufferWithProperties_disp);
+gen_entry!(clCreateBufferWithProperties, crate::dispatch::slot_of("clCreateBufferWithProperties"), *mut c_void, (context: cl_context, properties: *const c_void, flags: u64, size: usize, host_ptr: *mut c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2,__pad3], clCreateBufferWithProperties_disp);
 
 // ── slot 147: clCreateImageWithProperties ──
 #[allow(clippy::too_many_arguments)]
@@ -1626,9 +1626,9 @@ pub unsafe extern "C" fn clCreateImageWithProperties_disp(context: cl_context, p
     return core::ptr::null_mut();
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 147, &[context as usize, properties as usize, val(&flags), image_format as usize, image_desc as usize, host_ptr as usize, errcode_ret as usize]) as *mut c_void
+    call_by_slot(t, crate::dispatch::slot_of("clCreateImageWithProperties"), &[context as usize, properties as usize, val(&flags), image_format as usize, image_desc as usize, host_ptr as usize, errcode_ret as usize]) as *mut c_void
 }
-gen_entry!(clCreateImageWithProperties, 147, *mut c_void, (context: cl_context, properties: *const c_void, flags: u64, image_format: *const c_void, image_desc: *const c_void, host_ptr: *mut c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2], clCreateImageWithProperties_disp);
+gen_entry!(clCreateImageWithProperties, crate::dispatch::slot_of("clCreateImageWithProperties"), *mut c_void, (context: cl_context, properties: *const c_void, flags: u64, image_format: *const c_void, image_desc: *const c_void, host_ptr: *mut c_void, errcode_ret: *mut cl_int), [__pad0,__pad1,__pad2], clCreateImageWithProperties_disp);
 
 // ── slot 148: clSetContextDestructorCallback ──
 #[allow(clippy::too_many_arguments)]
@@ -1637,9 +1637,9 @@ pub unsafe extern "C" fn clSetContextDestructorCallback_disp(context: cl_context
     return CL_INVALID_CONTEXT;
     }
     let t = object_dispatch(context);
-    call_by_slot(t, 148, &[context as usize, pfn_notify as usize, user_data as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clSetContextDestructorCallback"), &[context as usize, pfn_notify as usize, user_data as usize]) as cl_int
 }
-gen_entry!(clSetContextDestructorCallback, 148, cl_int, (context: cl_context, pfn_notify: *mut c_void, user_data: *mut c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clSetContextDestructorCallback_disp);
+gen_entry!(clSetContextDestructorCallback, crate::dispatch::slot_of("clSetContextDestructorCallback"), cl_int, (context: cl_context, pfn_notify: *mut c_void, user_data: *mut c_void), [__pad0,__pad1,__pad2,__pad3,__pad4,__pad5,__pad6], clSetContextDestructorCallback_disp);
 
 // ── slot 149: clGetKernelSuggestedLocalWorkSize ──
 #[allow(clippy::too_many_arguments)]
@@ -1648,9 +1648,9 @@ pub unsafe extern "C" fn clGetKernelSuggestedLocalWorkSize_disp(command_queue: c
     return CL_INVALID_COMMAND_QUEUE;
     }
     let t = object_dispatch(command_queue);
-    call_by_slot(t, 149, &[command_queue as usize, kernel as usize, work_dim as usize, global_work_offset as usize, global_work_size as usize, suggested_local_work_size as usize]) as cl_int
+    call_by_slot(t, crate::dispatch::slot_of("clGetKernelSuggestedLocalWorkSize"), &[command_queue as usize, kernel as usize, work_dim as usize, global_work_offset as usize, global_work_size as usize, suggested_local_work_size as usize]) as cl_int
 }
-gen_entry!(clGetKernelSuggestedLocalWorkSize, 149, cl_int, (command_queue: cl_command_queue, kernel: cl_kernel, work_dim: cl_uint, global_work_offset: *const usize, global_work_size: *const usize, suggested_local_work_size: *mut usize), [__pad0,__pad1,__pad2,__pad3], clGetKernelSuggestedLocalWorkSize_disp);
+gen_entry!(clGetKernelSuggestedLocalWorkSize, crate::dispatch::slot_of("clGetKernelSuggestedLocalWorkSize"), cl_int, (command_queue: cl_command_queue, kernel: cl_kernel, work_dim: cl_uint, global_work_offset: *const usize, global_work_size: *const usize, suggested_local_work_size: *mut usize), [__pad0,__pad1,__pad2,__pad3], clGetKernelSuggestedLocalWorkSize_disp);
 
 /// Name -> loader export address (C: function_description[] table).
 use crate::exports::{clCreateContext, clCreateContextFromType, clDeinitCompound, clGetGLContextInfoKHR, clGetPlatformIDs, clGetPlatformInfo, clIcdGetPlatformIDsKHR, clUnloadCompiler, clUnloadPlatformCompiler, clWaitForEvents};
