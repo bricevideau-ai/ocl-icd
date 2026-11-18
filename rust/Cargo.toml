@@ -11,8 +11,11 @@ license = "BSD-2-Clause"
 [lib]
 crate-type = ["cdylib"]
 
-# No crates.io dependencies: the small libc surface used (dlopen family) is
-# declared directly in src/clib.rs, so the crate builds offline in CI.
+# Zero dependencies, cargo build included: the small libc surface used
+# (dlopen family) is declared directly in src/clib.rs, and the slot tables
+# are generated before cargo runs by:
+#   ruby icd_generator.rb --mode rust-generate   (see rust/build-loader.sh)
+# so libOpenCL.so ships no third-party code and crates.io is never consulted.
 
 [profile.release]
 debug = 2

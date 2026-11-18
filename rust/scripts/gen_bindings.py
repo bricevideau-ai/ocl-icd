@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Rust counterpart of ocl-icd's icd_generator.rb (entry-point subset).
+"""Parity oracle for the Rust bindings generator (not in the build path).
+
+The generator is now `icd_generator.rb --mode rust-generate` (same
+interpreter and YAML semantics as the C side; invoked by build-loader.sh).
+Keep this script in sync with the ruby mode as the independent check:
+output must match modulo the provenance header. Rust counterpart of
+ocl-icd's icd_generator.rb (entry-point subset).
 
 Reads ocl_interface.yaml (slot index -> Khronos prototype) and emits
 src/gen_forwarders.rs:

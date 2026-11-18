@@ -23,7 +23,7 @@ import tempfile
 
 
 def main():
-    cargo, manifest_dir, out = sys.argv[1], sys.argv[2], sys.argv[3]
+    cargo, manifest_dir, out = sys.argv[1], os.path.abspath(sys.argv[2]), sys.argv[3]
     argv_file = tempfile.mktemp(prefix='ocl-icd-rs-link-argv-')
     rsp_file = tempfile.mktemp(prefix='ocl-icd-rs-link-rsp-')
     wrapper = tempfile.mktemp(prefix='ocl-icd-rs-link-')
@@ -42,6 +42,9 @@ def main():
     os.chmod(wrapper, 0o755)
     env = dict(os.environ)
     env['RUSTFLAGS'] = (env.get('RUSTFLAGS', '') + ' -C linker=' + wrapper).strip()
+    # cwd MUST be the manifest dir: the wrapper resolves its argv-dump paths
+    # relative to cargo's cwd, and a bare relative manifest (VPATH/distcheck:
+    # "rust") would otherwise pull build inputs from the parent directory.
     r = subprocess.run([cargo, 'build', '--release'], cwd=manifest_dir,
                        capture_output=True, text=True, env=env)
     if not os.path.exists(argv_file):

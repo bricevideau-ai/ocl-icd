@@ -75,7 +75,6 @@ if RUST_LOADER
 CLEANFILES += rust/libocl-icd-rs.a rust/rust-loader.map
 # cargo writes into rust/ (target/, regenerated src files); distcleancheck
 # fails on anything left behind.
-MAINTAINERCLEANFILES += rust/src/slots.rs rust/src/gen_forwarders.rs
 distclean-local::
 	rm -rf rust/target rust/.cargo-home
 	@if test "$(srcdir)" != "."; then \
@@ -83,7 +82,8 @@ distclean-local::
 	fi
 
 rust/libocl-icd-rs.a: $(srcdir)/rust/src/exports.rs $(srcdir)/rust/Cargo.toml \
-		$(srcdir)/rust/build.rs ocl_icd_loader_gen.map $(FILES_FROM_DATABASE)
+		$(srcdir)/rust/build.rs $(srcdir)/ocl_interface.yaml \
+		ocl_icd_loader_gen.map $(FILES_FROM_DATABASE)
 	$(SHELL) $(srcdir)/rust/build-loader.sh \
 		"$(srcdir)/rust" "$(CARGO)" "$(OCL_ICD_RS_VERSION)"
 endif
@@ -96,14 +96,12 @@ EXTRA_DIST += rust/build-loader.sh \
 	rust/scripts/gen_bindings.py rust/scripts/gen_map.py \
 	rust/scripts/archive-objects.py \
 	rust/src/clib.rs rust/src/debug.rs rust/src/dispatch.rs \
-	rust/src/exports.rs rust/src/lib.rs rust/src/registry.rs \
-	rust/src/types.rs
+	rust/src/exports.rs rust/src/gen_forwarders.rs rust/src/lib.rs \
+	rust/src/registry.rs rust/src/slots.rs rust/src/types.rs
 
 # gen_forwarders.rs/slots.rs are regenerated from ocl_interface.yaml by the
 # build, so they are pruned from the tarball to keep the dist drift-proof;
 # the committed copies only serve plain-git development builds.
-dist-hook::
-	rm -f $(distdir)/rust/src/gen_forwarders.rs $(distdir)/rust/src/slots.rs
 
 ####################################
 # A utility to list loaded layers

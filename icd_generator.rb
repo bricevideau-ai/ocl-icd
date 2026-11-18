@@ -25,6 +25,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =end
 
 require 'yaml'
+require 'set'
 
 module IcdGenerator
 
@@ -987,6 +988,470 @@ EOF
 
   ##########################################################
   ##########################################################
+  # rust-database mode
+  # Flatten the interface database to a line-per-slot table for the Rust
+  # loader's build.rs:  <slot>\t<name>\t<prototype with \n escapes>\n.
+  # The name is the CL_API_CALL identifier (empty when the slot holds no
+  # declaration, i.e. the nil slots of the historical numbering); the
+  # prototype is the verbatim YAML block scalar. Ruby owns YAML parsing
+  # everywhere in this project; the consumer needs neither.
+  def self.generate_rust_table(yamlfile)
+    doc = YAML::load_file(yamlfile)
+    File.open('ocl_interface.table','w') { |f|
+      doc.keys.sort.each { |k|
+        v = doc[k].to_s
+        name = (v.match(/CL_API_CALL\s*([A-Za-z0-9_]+)\s*\(/m) || [nil,''])[1]
+        f.puts "#{k}\t#{name}\t#{v.gsub(/\n/, '\\n')}"
+      }
+    }
+  end
+
+
+  ##########################################################
+  ##########################################################
+  # rust-generate mode
+  # Rust counterpart of the entry-point subset of generate_from_database:
+  # emits rust/src/slots.rs and rust/src/gen_forwarders.rs straight from the
+  # interface database (one interpreter, one generator, zero crate deps).
+  # Ported line-by-line from rust/scripts/gen_bindings.py, which remains as
+  # the independent parity oracle.
+
+  RS_SPECIFIC_LOADER = %w[
+    clGetExtensionFunctionAddress clGetPlatformIDs clGetGLContextInfoKHR
+    clUnloadCompiler clUnloadPlatformCompiler clCreateContext
+    clCreateContextFromType clWaitForEvents clGetPlatformInfo].to_set
+  RS_LOADER_DISP_NAMES = {
+    'clGetPlatformIDs' => 'clGetPlatformIDs_disp',
+    'clGetPlatformInfo' => 'clGetPlatformInfo_disp',
+    'clCreateContext' => 'clCreateContext_disp',
+    'clCreateContextFromType' => 'clCreateContextFromType_disp',
+    'clWaitForEvents' => 'clWaitForEvents_disp',
+    'clGetGLContextInfoKHR' => 'clGetGLContextInfoKHR_disp',
+    'clGetExtensionFunctionAddress' => 'clGetExtensionFunctionAddress_disp',
+    'clUnloadCompiler' => 'clUnloadCompiler_disp',
+    'clUnloadPlatformCompiler' => 'clUnloadPlatformCompiler_disp',
+  }
+  RS_FIRST_TYPE_ERROR = {
+    'cl_platform_id' => ['CL_INVALID_PLATFORM', 'platform'],
+    'cl_device_id' => ['CL_INVALID_DEVICE', 'object'],
+    'cl_context' => ['CL_INVALID_CONTEXT', 'object'],
+    'cl_command_queue' => ['CL_INVALID_COMMAND_QUEUE', 'object'],
+    'cl_mem' => ['CL_INVALID_MEM_OBJECT', 'object'],
+    'cl_program' => ['CL_INVALID_PROGRAM', 'object'],
+    'cl_kernel' => ['CL_INVALID_KERNEL', 'object'],
+    'cl_event' => ['CL_INVALID_EVENT', 'object'],
+    'cl_sampler' => ['CL_INVALID_SAMPLER', 'object'],
+  }
+  RS_NON_STANDARD_ERROR = Set.new(%w[clGetExtensionFunctionAddressForPlatform clSVMAlloc])
+  RS_OBJECT_TYPES = Set.new(%w[cl_platform_id cl_device_id cl_context cl_command_queue
+    cl_mem cl_program cl_kernel cl_event cl_sampler])
+  RS_BASE_TO_RUST = {
+    'cl_int' => 'cl_int', 'cl_uint' => 'cl_uint', 'cl_bool' => 'cl_bool',
+    'size_t' => 'usize', 'char' => 'c_char', 'void' => 'c_void', 'cl_char' => 'i8',
+    'cl_uchar' => 'u8', 'cl_short' => 'i16', 'cl_ushort' => 'u16', 'cl_long' => 'i64',
+    'cl_flags' => 'u64', 'cl_bitfield' => 'u64', 'cl_ulong' => 'u64',
+    'cl_device_type' => 'cl_device_type', 'cl_context_properties' => 'cl_context_properties',
+    'cl_mem_flags' => 'u64', 'cl_map_flags' => 'u64', 'cl_svm_mem_flags' => 'u64',
+    'cl_mem_migration_flags' => 'u64', 'cl_command_queue_properties' => 'u64',
+    'cl_device_fp_config' => 'u64',
+    'cl_device_partition_property' => 'isize', 'cl_sampler_properties' => 'isize',
+    'cl_pipe_properties' => 'isize', 'cl_kernel_execution_properties' => 'isize',
+    'cl_platform_info' => 'cl_platform_info', 'cl_device_info' => 'cl_device_info',
+    'cl_context_info' => 'cl_context_info', 'cl_command_queue_info' => 'u32',
+    'cl_mem_object_type' => 'u32', 'cl_image_info' => 'u32',
+    'cl_build_status' => 'i32', 'cl_program_info' => 'u32', 'cl_program_binary_type' => 'u32',
+    'cl_program_build_info' => 'u32', 'cl_kernel_info' => 'u32', 'cl_kernel_work_group_info' => 'u32',
+    'cl_kernel_arg_info' => 'u32', 'cl_event_info' => 'u32', 'cl_event_status' => 'i32',
+    'cl_profiling_info' => 'u32', 'cl_sampler_info' => 'u32', 'cl_addressing_mode' => 'u32',
+    'cl_filter_mode' => 'u32', 'cl_channel_order' => 'u32', 'cl_channel_type' => 'u32',
+    'cl_gl_info_type' => 'u32', 'cl_gl_texture_info' => 'u32', 'cl_gl_platform_info' => 'u32',
+    'cl_gl_context_info' => 'u32', 'cl_image_desc' => 'c_void', 'cl_image_format' => 'c_void',
+    'cl_layer_info' => 'u32', 'cl_layer_properties' => 'usize',
+    'cl_platform_id' => 'cl_platform_id', 'cl_device_id' => 'cl_device_id',
+    'cl_context' => 'cl_context', 'cl_command_queue' => 'cl_command_queue',
+    'cl_mem' => 'cl_mem', 'cl_program' => 'cl_program', 'cl_kernel' => 'cl_kernel',
+    'cl_event' => 'cl_event', 'cl_sampler' => 'cl_sampler', 'cl_GLuint' => 'u32',
+    'cl_GLint' => 'i32', 'cl_GLenum' => 'u32', 'cl_GLsizei' => 'u32', 'clGLenum' => 'u32',
+    'clGLint' => 'i32', 'clGLsizei' => 'u32',
+  }
+
+  def self.rs_ident_ok?(x)
+    !!(x =~ /\A[A-Za-z_][A-Za-z0-9_]*\z/)
+  end
+
+  def self.rs_parse_entry(entry)
+    # parameter NAMES live inside /* */ -> replace each comment by its name
+    body = entry.gsub(%r{/\*.*?\*/}m) { |m0|
+      inner = m0[2..-3].gsub(/\A[\s*]+|[\s*]+\z/, '')
+      w = inner.split
+      ok = !w.empty? && w.all? { |x| rs_ident_ok?(x) }
+      ok ? w[-1] : 'unnamed'
+    }
+    m = body.match(/CL_API_CALL\s*([A-Za-z0-9_]+)\s*\(/m)
+    return nil unless m
+    name = m[1]
+    ret_m = body.match(/CL_API_ENTRY\s+(.*?)\s*CL_API_CALL/m)
+    ret_raw = ret_m ? ret_m[1].split.join(' ') : 'cl_int'
+    ret_raw = ret_raw[6..-1] if ret_raw.start_with?('const ')
+    if ret_raw == 'void'
+      ret_base = 'void'
+    else
+      toks0 = ret_raw.gsub('*', ' ').gsub('[', ' ').split
+      ret_base = toks0.empty? ? '' : toks0[-1]
+    end
+    ret_ptr = ret_raw != 'void' && (ret_raw.include?('*') || ret_raw.include?('[') || RS_OBJECT_TYPES.include?(ret_base))
+    ret_u64 = !ret_ptr && ret_base == 'cl_ulong'
+    ret_void = !ret_ptr && !ret_u64 && ret_raw == 'void'
+    start = body.index('(', m.end(0) - 1)
+    depth = 0
+    fin = nil
+    (start...body.length).each { |i|
+      ch = body[i]
+      if ch == '('
+        depth += 1
+      elsif ch == ')'
+        depth -= 1
+        if depth == 0
+          fin = i
+          break
+        end
+      end
+    }
+    return nil unless fin
+    flat = body[(start + 1)...fin].split.join(' ')
+    chunks = []
+    cur = ''
+    depth = 0
+    flat.each_char { |ch|
+      if ch == '('
+        depth += 1
+      elsif ch == ')'
+        depth -= 1
+      end
+      if ch == ',' && depth == 0
+        chunks << cur
+        cur = ''
+      else
+        cur += ch
+      end
+    }
+    chunks << cur unless cur.strip.empty?
+    params = []
+    chunks.each { |c0|
+      c = c0.strip
+      next if c.empty? || c == 'void'
+      # callback parameter: "* name)" / "* /* name */)" with an unclosed '('
+      fmc = c.match(/\*\s*(?:\/\*\s*)?([A-Za-z_][A-Za-z0-9_]*)\s*(?:\*\/\s*)?\)/)
+      if fmc
+        pre = c[0...fmc.begin(0)]
+        if pre.count('(') - pre.count(')') >= 1
+          params << ['*mut c_void', fmc[1]]
+          next
+        end
+      end
+      nm = c.match(/([A-Za-z_][A-Za-z0-9_]*)\s*\z/)
+      return nil unless nm
+      pname = nm[1]
+      decl = c[0...nm.begin(1)]
+      stars = decl.count('*')
+      toks0 = decl.gsub('*', ' ').split
+      bt = toks0.empty? ? 'void' : toks0[-1]
+      toks = toks0.reject { |t| t == 'const' }
+      rust = RS_BASE_TO_RUST.key?(bt) ? RS_BASE_TO_RUST[bt] : (stars > 0 ? 'c_void' : 'usize')
+      before = decl.split(bt, 2)[0].to_s
+      is_const = toks.include?('const') || before.split.include?('const')
+      stars.times { rust = '*mut ' + rust }
+      rust = rust.sub('*mut', '*const') if is_const && rust.start_with?('*mut')
+      params << [rust, pname]
+    }
+    if ret_ptr
+      ret_rust = '*mut c_void'
+    elsif ret_u64
+      ret_rust = 'u64'
+    elsif ret_base == 'void'
+      ret_rust = '()'
+    else
+      ret_rust = RS_BASE_TO_RUST.fetch(ret_base, 'cl_int')
+    end
+    params = params.map { |pt, pn| pn == 'errcode_ret' ? ['*mut cl_int', pn] : [pt, pn] }
+    seen = {}
+    uniq = []
+    params.each { |pt, pn|
+      if seen.key?(pn)
+        seen[pn] += 1
+        pn = format('%s%d', pn, seen[pn])
+      else
+        seen[pn] = 0
+      end
+      uniq << [pt, pn]
+    }
+    params = uniq
+    [name, ret_rust, ret_ptr, ret_void, ret_u64, params]
+  end
+
+  def self.rs_classify(t)
+    ts = t.strip
+    return 'Ptr' if ts.start_with?('*') || RS_FIRST_TYPE_ERROR.key?(ts)
+    return 'U64' if ts == 'u64' || ts == 'cl_device_type'
+    'Trivial'
+  end
+
+  def self.rs_marsh_of(pt, pn)
+    rs_classify(pt) == 'U64' ? format('val(&%s)', pn) : format('%s as usize', pn)
+  end
+
+  def self.generate_rust_bindings(yamlfile, slots_out, fwders_out)
+    d = YAML.load_file(yamlfile)
+    n = d.keys.map(&:to_i).max + 1
+    snames = (0...n).map { |i|
+      v = d[i]
+      mm = v && v.match(/CL_API_CALL\s+([A-Za-z0-9_]+)\s*\(/m)
+      mm ? mm[1] : ''
+    }
+    slines = ['// GENERATED by icd_generator.rb --mode rust-generate -- do not edit',
+              format('pub const NUM_DISPATCH_SLOTS: usize = %d;', n),
+              'pub const DISPATCH_SLOT_NAMES: [&str; NUM_DISPATCH_SLOTS] = [']
+    snames.each { |nm| slines << format('    "%s",', nm) }
+    slines << '];'
+    slines << ''
+    File.write(slots_out, slines.join("\n"))
+
+    entries = {}
+    slot_of = {}
+    (0...n).each { |i|
+      v = d[i]
+      next if v.nil? || v.to_s.strip.empty?
+      p = rs_parse_entry(v)
+      if p.nil?
+        warn format('// UNPARSED slot %d', i)
+        next
+      end
+      nm = p[0]
+      next if entries.key?(nm)
+      entries[nm] = [i] + p[1..]
+      slot_of[nm] = i
+    }
+
+    out = [
+      '// GENERATED by icd_generator.rb --mode rust-generate from ocl_interface.yaml',
+      '// -- do not edit. Port of icd_generator.rb to Rust; oracle in rust/scripts.',
+      '#![allow(clippy::too_many_arguments, unused_variables, non_snake_case, dead_code)]',
+      'use crate::dispatch::object_dispatch;',
+      'use crate::exports::{call_by_slot, call_by_slot_void, platform_dispatch_table, val, default_platform_id};',
+      'use crate::exports::{clGetPlatformIDs_disp, clGetPlatformInfo_disp, clCreateContext_disp,',
+      '    clCreateContextFromType_disp, clWaitForEvents_disp, clGetGLContextInfoKHR_disp,',
+      '    clGetExtensionFunctionAddress_disp,',
+      '    clUnloadCompiler_disp, clUnloadPlatformCompiler_disp};',
+      'use crate::gen_entry;',
+      'use crate::types::*;',
+      'use core::ffi::{c_char, c_void};',
+      '',
+      '// error constants for NULL-object paths (khronos values)',
+      'const CL_INVALID_CONTEXT: cl_int = -34;',
+      'const CL_INVALID_COMMAND_QUEUE: cl_int = -36;',
+      'const CL_INVALID_MEM_OBJECT: cl_int = -38;',
+      'const CL_INVALID_EVENT: cl_int = -40;',
+      'const CL_INVALID_KERNEL: cl_int = -42;',
+      'const CL_INVALID_SAMPLER: cl_int = -35;',
+      'const CL_INVALID_PROGRAM: cl_int = -44;',
+      'const CL_INVALID_OPERATION: cl_int = -59;',
+      '',
+    ]
+
+    skipped = []
+    generated = []
+    names_by_slot = entries.keys.sort_by { |k| entries[k][0] }
+    names_by_slot.each { |name|
+      slot, ret_rust, ret_ptr, ret_void, ret_u64, params = entries[name]
+      next if RS_SPECIFIC_LOADER.include?(name)
+      if params.empty?
+        skipped << [name, 'no params']
+        next
+      end
+      ft = params[0][0]
+      base = ft.dup
+      base = base[5..-1] while base.start_with?('*mut ') || base.start_with?('*const ')
+      fte = RS_FIRST_TYPE_ERROR[base]
+      if fte.nil?
+        skipped << [name, 'unmapped first param ' + ft]
+        next
+      end
+      err_const, route = fte
+      has_err = params.any? { |_t, pn| pn == 'errcode_ret' }
+      nonstd = RS_NON_STANDARD_ERROR.include?(name)
+      p0 = params[0][1]
+      arglist = params.map { |pt, pn| format('%s: %s', pn, pt) }.join(', ')
+      marsh = params.map { |pt, pn| rs_marsh_of(pt, pn) }.join(', ')
+
+      nb = []
+      if has_err
+        nb << format('if !errcode_ret.is_null() { *errcode_ret = %s; }', err_const)
+        nb << (ret_ptr ? 'return core::ptr::null_mut();' :
+               (!ret_void && !ret_u64 ? format('return %s;', err_const) : 'return;'))
+      elsif nonstd
+        nb << 'return core::ptr::null_mut();'
+      else
+        nb << (ret_ptr ? 'return core::ptr::null_mut();' :
+               (ret_void ? 'return;' : format('return %s;', err_const)))
+      end
+
+      out << format('// ── slot %d: %s ──', slot, name)
+      out << '#[allow(clippy::too_many_arguments)]'
+      out << format('pub unsafe extern "C" fn %s_disp(%s) -> %s {', name, arglist, ret_rust)
+      if name == 'clGetExtensionFunctionAddressForPlatform'
+        out << '    if !func_name.is_null() {'
+        out << '        let cname = unsafe { std::ffi::CStr::from_ptr(func_name) };'
+        out << '        if let Ok(s) = cname.to_str() {'
+        out << '            if s.len() > 3 && (s.ends_with("KHR") || s.ends_with("EXT")) {'
+        out << '                if let Some(a) = crate::gen::func_desc_lookup(s) { return a; }'
+        out << '            }'
+        out << '        }'
+        out << '    }'
+      end
+      if route == 'platform'
+        if ret_void
+          ret_none = 'return'
+        elsif ret_ptr || ret_u64
+          ret_none = 'return core::ptr::null_mut()'
+        else
+          ret_none = format('return %s', err_const)
+        end
+        joined = nb.length == 1 ? nb[0] : nb.join(' ') + ' ' + ret_none
+        out << format("    let %1$s = if %1$s.is_null() {        match default_platform_id() {\n            Some(p) => p,\n            None => { %3$s }\n        }\n    } else { %1$s };",
+                      p0, '', joined)
+        out << format('    let t = match platform_dispatch_table(%s) {', p0)
+        out << '        Some(t) => t,'
+        out << '        None => {'
+        nb.each { |l| out << '        ' + l }
+        out << '        }'
+        out << '    };'
+      else
+        out << format('    if %s.is_null() {', p0)
+        nb.each { |l| out << '    ' + l }
+        out << '    }'
+        out << format('    let t = object_dispatch(%s);', p0)
+      end
+      slot_expr = format('crate::dispatch::slot_of("%s")', name)
+      if ret_ptr
+        out << format('    call_by_slot(t, %s, &[%s]) as *mut c_void', slot_expr, marsh)
+      elsif ret_u64
+        out << format('    call_by_slot(t, %s, &[%s]) as u64', slot_expr, marsh)
+      elsif ret_void
+        out << format('    call_by_slot_void(t, %s, &[%s]);', slot_expr, marsh)
+      else
+        out << format('    call_by_slot(t, %s, &[%s]) as cl_int', slot_expr, marsh)
+      end
+      out << '}'
+      npad = [0, 10 - params.length].max
+      pads = (0...npad).map { |k| format('__pad%d', k) }.join(',')
+      out << format('gen_entry!(%1$s, crate::dispatch::slot_of("%1$s"), %2$s, (%3$s), [%4$s], %1$s_disp);',
+                    name, ret_rust, arglist, pads)
+      out << ''
+      generated << name
+    }
+
+    exported = (generated + (RS_SPECIFIC_LOADER.to_a - ['clGetExtensionFunctionAddress']) +
+                ['clGetExtensionFunctionAddressForPlatform', 'clDeinitCompound', 'clIcdGetPlatformIDsKHR'])
+    exported = exported.uniq.sort - ['clGetICDLoaderInfoOCLICD']
+    out << '/// Name -> loader export address (C: function_description[] table).'
+    use_list = ((RS_SPECIFIC_LOADER.to_a - ['clGetExtensionFunctionAddress']) +
+                ['clDeinitCompound', 'clIcdGetPlatformIDsKHR']).uniq.sort
+    out << 'use crate::exports::{' + use_list.join(', ') + '};'
+    out << 'pub fn func_desc_lookup(name: &str) -> Option<*mut c_void> {'
+    out << '    match name {'
+    exported.each { |fn_name|
+      out << format('        "%1$s" => Some(%1$s as *mut c_void),', fn_name)
+    }
+    out << '        _ => None,'
+    out << '    }'
+    out << '}'
+    out << ''
+
+    out << "/// Address of the loader's layer-facing (`_disp`) implementation of slot `slot`."
+    out << 'pub fn gen_slot_disp(slot: usize) -> *mut c_void {'
+    out << '    match slot {'
+    seen_slots = Set.new
+    names_by_slot.each { |name|
+      slot = slot_of[name]
+      if RS_SPECIFIC_LOADER.include?(name)
+        ln = RS_LOADER_DISP_NAMES[name]
+        if ln
+          seen_slots << slot
+          out << format('        %d => %s as *mut c_void,', slot, ln)
+        end
+        next
+      end
+      next if seen_slots.include?(slot) || !generated.include?(name)
+      seen_slots << slot
+      out << format('        %d => %s_disp as *mut c_void,', slot, name)
+    }
+    out << '        _ => core::ptr::null_mut(),'
+    out << '    }'
+    out << '}'
+    out << ''
+
+    out << '/// Address of the post-deinit (`_unsupp`) variant of slot `slot`:'
+    out << '/// sets errcode_ret = CL_INVALID_OPERATION when the signature carries one.'
+    out << 'pub fn gen_slot_unsupp(slot: usize) -> *mut c_void {'
+    out << '    match slot {'
+    seen_slots = Set.new
+    stub_defs = []
+    stub_names = Set.new
+    names_by_slot.each { |name|
+      slot = slot_of[name]
+      next if RS_SPECIFIC_LOADER.include?(name) || seen_slots.include?(slot)
+      seen_slots << slot
+      _s, ret_rust, ret_ptr, ret_void, ret_u64, params = entries[name]
+      eidx = params.index { |_t, pn| pn == 'errcode_ret' }
+      eidx = nil if eidx && eidx >= 10
+      if eidx
+        fn_name = format('us_err_s%d_a%d', slot, eidx)
+        out << format('        %d => %s as *mut c_void,', slot, fn_name)
+        unless stub_names.include?(fn_name)
+          stub_names << fn_name
+          stub_defs << format("extern \"C\" fn %s(a0: usize, a1: usize, a2: usize, a3: usize, a4: usize, a5: usize, a6: usize, a7: usize, a8: usize, a9: usize) -> usize {\n    unsafe {\n        let __a = [a0, a1, a2, a3, a4, a5, a6, a7, a8, a9];\n        if __a[%d] != 0 { *(__a[%d] as *mut cl_int) = CL_INVALID_OPERATION; }\n    }\n    0\n}",
+            fn_name, eidx, eidx)
+        end
+      elsif ret_ptr || RS_NON_STANDARD_ERROR.include?(name)
+        out << format('        %d => unsupp_null as *mut c_void,', slot)
+      elsif ret_void
+        out << format('        %d => unsupp_void as *mut c_void,', slot)
+      else
+        out << format('        %d => unsupp_int as *mut c_void,', slot)
+      end
+    }
+    out << '        1 => unsupp_int as *mut c_void, // clGetPlatformInfo (no errcode_ret param: plain -59)'
+    out << '        65 => unsupp_null as *mut c_void, // clGetExtensionFunctionAddress'
+    out << '        _ => core::ptr::null_mut(),'
+    out << '    }'
+    out << '}'
+    out.concat(stub_defs)
+    out << <<'RUBY'
+
+extern "C" fn unsupp_int(_: usize, _: usize, _: usize, _: usize, _: usize, _: usize) -> cl_int {
+    CL_INVALID_OPERATION
+}
+extern "C" fn unsupp_null(_: usize, _: usize, _: usize, _: usize, _: usize, _: usize) -> usize {
+    0
+}
+extern "C" fn unsupp_void(_: usize, _: usize, _: usize, _: usize, _: usize, _: usize) {}
+extern "C" fn unsupp_errcode(_a0: usize, _a1: usize, _a2: usize, _a3: usize, _a4: usize, a5: usize) -> usize {
+    unsafe {
+        if a5 != 0 {
+            *(a5 as *mut cl_int) = CL_INVALID_OPERATION;
+        }
+    }
+    0
+}
+RUBY
+    skipped.each { |name, why| out << format('// SKIPPED %s: %s', name, why) }
+    File.write(fwders_out, out.join("\n") + "\n")
+    ng = generated.length
+    printf("generated: %d functions; skipped: %d\n", ng, skipped.length)
+  end
+
+  ##########################################################
+  ##########################################################
   # update-database mode
   def self.savedb(yamlfile)
     File::open(yamlfile,"w") { |f|
@@ -1067,8 +1532,14 @@ OptionParser.new do |opts|
   do |v|
     options[:"system-headers"] = v
   end
-  opts.on("-m", "--mode [MODE]", [:database, :generate, :"update-database"],
-          "Select mode (database, generate, update-database)") do |m|
+  opts.on("--rust-slots FILE", String, "slots.rs output path (rust-generate)") do |v|
+    options[:"rust-slots"] = v
+  end
+  opts.on("--rust-gen FILE", String, "gen_forwarders.rs output path (rust-generate)") do |v|
+    options[:"rust-gen"] = v
+  end
+  opts.on("-m", "--mode [MODE]", [:database, :generate, :"update-database", :"rust-generate"],
+          "Select mode (database, generate, update-database, rust-generate)") do |m|
     options[:mode] = m
   end
 end.parse!
@@ -1086,6 +1557,10 @@ if options[:mode] == :generate then
   else
     IcdGenerator.generate_sources(from_headers=true, from_database=false)
   end
+elsif options[:mode] == :"rust-generate" then
+  IcdGenerator.generate_rust_bindings(options[:database],
+    options[:"rust-slots"] || "rust/src/slots.rs",
+    options[:"rust-gen"] || "rust/src/gen_forwarders.rs")
 elsif options[:mode] == :"update-database" then
   if !options[:input] then
     raise "--input option required"

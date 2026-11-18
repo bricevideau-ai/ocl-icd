@@ -24,3 +24,4 @@ Makefile.in
 /rust/.cargo-home/
 /rust/.libs/
 __pycache__/
+vendors/*.icd
