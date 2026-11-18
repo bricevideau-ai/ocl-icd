@@ -1117,17 +1117,11 @@ EOF
     clGetExtensionFunctionAddress clGetPlatformIDs clGetGLContextInfoKHR
     clUnloadCompiler clUnloadPlatformCompiler clCreateContext
     clCreateContextFromType clWaitForEvents clGetPlatformInfo].to_set
-  RS_LOADER_DISP_NAMES = {
-    'clGetPlatformIDs' => 'clGetPlatformIDs_disp',
-    'clGetPlatformInfo' => 'clGetPlatformInfo_disp',
-    'clCreateContext' => 'clCreateContext_disp',
-    'clCreateContextFromType' => 'clCreateContextFromType_disp',
-    'clWaitForEvents' => 'clWaitForEvents_disp',
-    'clGetGLContextInfoKHR' => 'clGetGLContextInfoKHR_disp',
-    'clGetExtensionFunctionAddress' => 'clGetExtensionFunctionAddress_disp',
-    'clUnloadCompiler' => 'clUnloadCompiler_disp',
-    'clUnloadPlatformCompiler' => 'clUnloadPlatformCompiler_disp',
-  }
+  # name -> loader-disp implementation: <name>_disp for every name in the
+  # array above (clGetExtensionFunctionAddress_disp is still looked up here
+  # for the slot-65 row of gen_slot_disp, although the function is not a
+  # SPECIFIC_LOADER skip case).
+  RS_LOADER_DISP_NAMES = RS_SPECIFIC_LOADER.to_a.to_h { |n| [n, n + "_disp"] }
   RS_FIRST_TYPE_ERROR = {
     'cl_platform_id' => ['CL_INVALID_PLATFORM', 'platform'],
     'cl_device_id' => ['CL_INVALID_DEVICE', 'object'],
@@ -1140,22 +1134,21 @@ EOF
     'cl_sampler' => ['CL_INVALID_SAMPLER', 'object'],
   }
   RS_NON_STANDARD_ERROR = Set.new(%w[clGetExtensionFunctionAddressForPlatform clSVMAlloc])
-  RS_OBJECT_TYPES = Set.new(%w[cl_platform_id cl_device_id cl_context cl_command_queue
-    cl_mem cl_program cl_kernel cl_event cl_sampler])
-  RS_BASE_TO_RUST = {
-    'cl_int' => 'cl_int', 'cl_uint' => 'cl_uint', 'cl_bool' => 'cl_bool',
-    'size_t' => 'usize', 'char' => 'c_char', 'void' => 'c_void', 'cl_char' => 'i8',
-    'cl_uchar' => 'u8', 'cl_short' => 'i16', 'cl_ushort' => 'u16', 'cl_long' => 'i64',
-    'cl_flags' => 'u64', 'cl_bitfield' => 'u64', 'cl_ulong' => 'u64',
-    'cl_device_type' => 'cl_device_type', 'cl_context_properties' => 'cl_context_properties',
+  RS_OBJECT_TYPES = RS_FIRST_TYPE_ERROR.keys.to_set
+  # Khronos base type -> Rust type. Types mapping to themselves
+  # (cl_int, cl_uint, cl_bool, the object handles, the _info enums,
+  # cl_device_type, cl_context_properties) are the DEFAULT -- see
+  # rs_base_to_rust -- so only divergences are listed.
+  RS_TYPE_DIVERGENCES = {
+    'size_t' => 'usize', 'char' => 'c_char', 'void' => 'c_void',
+    'cl_char' => 'i8', 'cl_uchar' => 'u8', 'cl_short' => 'i16', 'cl_ushort' => 'u16',
+    'cl_long' => 'i64', 'cl_flags' => 'u64', 'cl_bitfield' => 'u64', 'cl_ulong' => 'u64',
     'cl_mem_flags' => 'u64', 'cl_map_flags' => 'u64', 'cl_svm_mem_flags' => 'u64',
     'cl_mem_migration_flags' => 'u64', 'cl_command_queue_properties' => 'u64',
     'cl_device_fp_config' => 'u64',
     'cl_device_partition_property' => 'isize', 'cl_sampler_properties' => 'isize',
     'cl_pipe_properties' => 'isize', 'cl_kernel_execution_properties' => 'isize',
-    'cl_platform_info' => 'cl_platform_info', 'cl_device_info' => 'cl_device_info',
-    'cl_context_info' => 'cl_context_info', 'cl_command_queue_info' => 'u32',
-    'cl_mem_object_type' => 'u32', 'cl_image_info' => 'u32',
+    'cl_command_queue_info' => 'u32', 'cl_mem_object_type' => 'u32', 'cl_image_info' => 'u32',
     'cl_build_status' => 'i32', 'cl_program_info' => 'u32', 'cl_program_binary_type' => 'u32',
     'cl_program_build_info' => 'u32', 'cl_kernel_info' => 'u32', 'cl_kernel_work_group_info' => 'u32',
     'cl_kernel_arg_info' => 'u32', 'cl_event_info' => 'u32', 'cl_event_status' => 'i32',
@@ -1164,13 +1157,20 @@ EOF
     'cl_gl_info_type' => 'u32', 'cl_gl_texture_info' => 'u32', 'cl_gl_platform_info' => 'u32',
     'cl_gl_context_info' => 'u32', 'cl_image_desc' => 'c_void', 'cl_image_format' => 'c_void',
     'cl_layer_info' => 'u32', 'cl_layer_properties' => 'usize',
-    'cl_platform_id' => 'cl_platform_id', 'cl_device_id' => 'cl_device_id',
-    'cl_context' => 'cl_context', 'cl_command_queue' => 'cl_command_queue',
-    'cl_mem' => 'cl_mem', 'cl_program' => 'cl_program', 'cl_kernel' => 'cl_kernel',
-    'cl_event' => 'cl_event', 'cl_sampler' => 'cl_sampler', 'cl_GLuint' => 'u32',
-    'cl_GLint' => 'i32', 'cl_GLenum' => 'u32', 'cl_GLsizei' => 'u32', 'clGLenum' => 'u32',
-    'clGLint' => 'i32', 'clGLsizei' => 'u32',
+    'cl_GLuint' => 'u32', 'cl_GLint' => 'i32', 'cl_GLenum' => 'u32', 'cl_GLsizei' => 'u32',
+    'clGLenum' => 'u32', 'clGLint' => 'i32', 'clGLsizei' => 'u32',
   }
+
+  # Khronos types that ARE their own Rust type name (typedefs in types.rs).
+  RS_TYPE_IDENTITY = Set.new(%w[
+    cl_int cl_uint cl_bool cl_device_type cl_context_properties
+    cl_platform_info cl_device_info cl_context_info
+    cl_platform_id cl_device_id cl_context cl_command_queue
+    cl_mem cl_program cl_kernel cl_event cl_sampler])
+
+  def self.rs_base_to_rust(bt)
+    RS_TYPE_DIVERGENCES.fetch(bt) { RS_TYPE_IDENTITY.include?(bt) ? bt : 'cl_int' }
+  end
 
   def self.rs_ident_ok?(x)
     !!(x =~ /\A[A-Za-z_][A-Za-z0-9_]*\z/)
@@ -1254,7 +1254,7 @@ EOF
       toks0 = decl.gsub('*', ' ').split
       bt = toks0.empty? ? 'void' : toks0[-1]
       toks = toks0.reject { |t| t == 'const' }
-      rust = RS_BASE_TO_RUST.key?(bt) ? RS_BASE_TO_RUST[bt] : (stars > 0 ? 'c_void' : 'usize')
+      rust = RS_TYPE_DIVERGENCES.key?(bt) ? RS_TYPE_DIVERGENCES[bt] : (RS_TYPE_IDENTITY.include?(bt) ? bt : (stars > 0 ? 'c_void' : 'usize'))
       before = decl.split(bt, 2)[0].to_s
       is_const = toks.include?('const') || before.split.include?('const')
       stars.times { rust = '*mut ' + rust }
@@ -1268,7 +1268,7 @@ EOF
     elsif ret_base == 'void'
       ret_rust = '()'
     else
-      ret_rust = RS_BASE_TO_RUST.fetch(ret_base, 'cl_int')
+      ret_rust = RS_TYPE_DIVERGENCES.key?(ret_base) ? RS_TYPE_DIVERGENCES[ret_base] : (RS_TYPE_IDENTITY.include?(ret_base) ? ret_base : 'cl_int')
     end
     params = params.map { |pt, pn| pn == 'errcode_ret' ? ['*mut cl_int', pn] : [pt, pn] }
     seen = {}
