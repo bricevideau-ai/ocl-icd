@@ -55,9 +55,17 @@ if RUST_LOADER
 # convenience library, with the OPENCL_x.y version nodes applied by the
 # version map derived from ocl_icd_loader_gen.map.
 libOpenCL_la_LIBADD += rust/libocl-icd-rs.a
+libOpenCL_la_DEPENDS = rust/libocl-icd-rs.a
+if USE_MAP
 libOpenCL_la_LDFLAGS += -Wl,--version-script,rust/rust-loader.map \
 	-Wl,--whole-archive -Wl,rust/libocl-icd-rs.a -Wl,--no-whole-archive
-libOpenCL_la_DEPENDS = rust/libocl-icd-rs.a rust/rust-loader.map
+libOpenCL_la_DEPENDS += rust/rust-loader.map
+else
+# macOS (where USE_MAP is false, as for the C loader): ld64 has neither
+# --version-script nor --whole-archive; -force_load pulls every member
+# of the archive, and the exports stay unversioned like the C loader's.
+libOpenCL_la_LDFLAGS += -Wl,-force_load,$(CURDIR)/rust/libocl-icd-rs.a
+endif
 else
 libOpenCL_la_SOURCES = ocl_icd_loader.c ocl_icd_loader.h ocl_icd_debug.h
 nodist_libOpenCL_la_SOURCES = ocl_icd_loader_gen.c ocl_icd.h

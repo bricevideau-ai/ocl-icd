@@ -25,6 +25,26 @@ jobs:
           path: |
             tests/testsuite.log
 
+  build-and-check-macos:
+    name: Build and Check (Rust loader, macOS)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: brew install automake libtool
+      - uses: dtolnay/rust-toolchain@stable
+      - run: ./bootstrap
+      - run: ./configure --enable-rust-loader --enable-official-khronos-headers
+      - run: make
+      - run: make check
+      # exports are unversioned on macOS (ld64 has no version scripts), like
+      # the C loader there; prove the binary carries the Rust code, not the
+      # C one, via the rust-only debug prefix (symtab-free .so still keeps
+      # __cstring section bytes that strings reads)
+      - run: |
+          lib=$(find .libs -name 'libOpenCL*' -type f | head -1)
+          echo "checking $lib"
+          strings -a "$lib" | grep -qE "ocl[-]icd[-]rs"
+
   distcheck:
     name: Distcheck (Rust loader)
     runs-on: ubuntu-latest

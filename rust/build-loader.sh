@@ -49,8 +49,12 @@ unset OCL_ICD_RS_MAP
 cd "$BUILDDIR"
 # 1. unversioned cdylib (source of truth for which symbols exist)
 "$CARGO" build --release
-# 2. version map, filtered against the cdylib export list
-ruby "$GENRB" --mode rust-map --c-map "$TOP/ocl_icd_loader_gen.map" \
-  --cdylib target/release/libocl_icd_rs.so --out rust-loader.map
+# 2. version map, filtered against the cdylib export list. ELF-only:
+# ld64 (macOS) has no --version-script and the Makefile links unversioned
+# there with -force_load, exactly like the C loader on that platform.
+if [ "$(uname -s)" != Darwin ]; then
+  ruby "$GENRB" --mode rust-map --c-map "$TOP/ocl_icd_loader_gen.map" \
+    --cdylib target/release/libocl_icd_rs.so --out rust-loader.map
+fi
 # 3. static archive of the crate objects for libtool
 ruby "$GENRB" --mode rust-archive --cargo "$CARGO" --manifest-dir . --out libocl-icd-rs.a
