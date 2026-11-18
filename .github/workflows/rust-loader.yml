@@ -15,9 +15,21 @@ jobs:
       - run: make check
       # prove the binary really carries the Rust code (not silently the C one)
       - run: nm -D --defined-only .libs/libOpenCL.so.1.0.0 | grep -q "@@OPENCL_1.0"
-      # the port's debug prefix lives only in the Rust code (stripped .so
-      # keeps no symtab, so a symbol grep here would always be empty)
-      - run: strings -a .libs/libOpenCL.so.1.0.0 | grep -qE "ocl[-]icd[-]rs"
+      # Discriminating identity gate: run a probe through the built lib
+      # and require the Rust loader's stderr banner. The D_LOG lines exist
+      # verbatim in the C loader too but printed as "ocl-icd(file:line):
+      # func:", so a "ocl-icd-rs:" hit proves the Rust code served the
+      # call. (nm/strings gates are NOT discriminating: C exports the same
+      # symbols, and a binary-searchable literal proves presence of code,
+      # not that it was linked as the loader.)
+      - run: |
+          printf '#include <CL/cl.h>\n#include <stdio.h>\nint main(void){cl_platform_id p[8];cl_uint n;\nif(clGetPlatformIDs(8,p,&n))return 77;return 0;}\n' > /tmp/rprobe.c
+          gcc -Ikhronos-headers /tmp/rprobe.c -o /tmp/rprobe -L./.libs -l:libOpenCL.so.1.0.0 -Wl,-rpath,$(pwd)/.libs
+          OCL_ICD_DEBUG=3 OCL_ICD_VENDORS=/nonexistent /tmp/rprobe 2>err.log; rc=$?
+          cat err.log
+          test $rc -eq 77 || { echo "probe must reach the loader (77=no-platform error path)"; exit 1; }
+          grep -q "ocl-icd-rs" err.log
+          ! grep -q "ocl-icd(" err.log
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -36,17 +48,18 @@ jobs:
       - run: ./configure --enable-rust-loader --enable-official-khronos-headers
       - run: make
       - run: make check
-      # exports are unversioned on macOS (ld64 has no version scripts), like
-      # the C loader there. The make check above already proves the dylib
-      # works (test binaries link -lOpenCL against .libs, and its symbols
-      # come from the Rust archive: if it had been empty the link would
-      # have died with undefined _cl* symbols). Belt gate: exported cl*
-      # count > 0 and the flagship symbol present.
+      # Discriminating identity gate (see Linux job): the "ocl-icd-rs:"
+      # banner exists only in the Rust code; the C loader prints the same
+      # messages as "ocl-icd(...)".
       - run: |
-          lib=$(find .libs -name 'libOpenCL*' -type f | head -1)
-          echo "checking $lib"
-          nm -gU "$lib" | grep -q _clGetPlatformIDs
-          test "$(nm -gU "$lib" | grep -c ' _cl[A-Za-z]*$')" -gt 100
+          printf '#include <CL/cl.h>\n#include <stdio.h>\nint main(void){cl_platform_id p[8];cl_uint n;\nif(clGetPlatformIDs(8,p,&n))return 77;return 0;}\n' > /tmp/rprobe.c
+          lib=$(find .libs -name 'libOpenCL*.dylib' -type f | head -1)
+          gcc -Ikhronos-headers /tmp/rprobe.c -o /tmp/rprobe "$lib"
+          OCL_ICD_DEBUG=3 OCL_ICD_VENDORS=/nonexistent /tmp/rprobe 2>err.log; rc=$?
+          cat err.log
+          test $rc -eq 77 || { echo "probe must reach the loader (77=no-platform error path)"; exit 1; }
+          grep -q "ocl-icd-rs" err.log
+          ! grep -q "ocl-icd(" err.log
 
   distcheck:
     name: Distcheck (Rust loader)
