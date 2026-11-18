@@ -19,9 +19,8 @@ BUILDDIR="$TOP/rust"
 mkdir -p "$BUILDDIR"
 if [ "$(cd "$SRCDIR_RUST" && pwd)" != "$(cd "$BUILDDIR" 2>/dev/null && pwd || echo none)" ]; then
   # out-of-tree (VPATH/distcheck): materialise the crate in the build dir
-  mkdir -p "$BUILDDIR/src" "$BUILDDIR/scripts"
+  mkdir -p "$BUILDDIR/src"
   cp -a "$SRCDIR_RUST/src/"* "$BUILDDIR/src/"
-  cp -a "$SRCDIR_RUST/scripts/"* "$BUILDDIR/scripts/"
   for f in Cargo.toml build.rs; do cp -a "$SRCDIR_RUST/$f" "$BUILDDIR/$f"; done
   # distcheck ships the tarball read-only; generation writes into src/
   chmod -R u+w "$BUILDDIR"

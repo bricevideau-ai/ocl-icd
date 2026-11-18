@@ -1110,7 +1110,7 @@ EOF
   # Rust counterpart of the entry-point subset of generate_from_database:
   # emits rust/src/slots.rs and rust/src/gen_forwarders.rs straight from the
   # interface database (one interpreter, one generator, zero crate deps).
-  # Ported line-by-line from rust/scripts/gen_bindings.py, which remains as
+  # Ported line-by-line from the python generator that this mode supersedes;
   # the independent parity oracle.
 
   RS_SPECIFIC_LOADER = %w[
