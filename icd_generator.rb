@@ -1059,7 +1059,7 @@ EOF
     rsp_file  = File.join(Dir.tmpdir, "ocl-icd-rs-link-rsp-#{tag}")
     wrapper   = File.join(Dir.tmpdir, "ocl-icd-rs-link-#{tag}")
     File.write(wrapper, format(
-      "#!/bin/bash\nfor a in \"$@\"; do\n  [ \"$a\" = \"-shared\" ] || continue\n  printf \"%%s\\n\" \"$@\" > %s\n  for b in \"$@\"; do\n    case \"$b\" in @*) [ -e \"$${b#@}\" ] && cp \"$${b#@}\" %s ;; esac\n  done\n  exit 1\ndone\nexec \"${CC:-cc}\" \"$@\"\n",
+      "#!/bin/bash\nfor a in \"$@\"; do\n  case \"$a\" in -shared|-dynamiclib) : ;; *) continue ;; esac\n  printf \"%%s\\n\" \"$@\" > %s\n  for b in \"$@\"; do\n    case \"$b\" in @*) [ -e \"$${b#@}\" ] && cp \"$${b#@}\" %s ;; esac\n  done\n  exit 1\ndone\nexec \"${CC:-cc}\" \"$@\"\n",
       argv_file, rsp_file))
     File.chmod(0o755, wrapper)
     old_rustflags = ENV['RUSTFLAGS']
