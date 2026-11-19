@@ -13,40 +13,15 @@ jobs:
       - run: make
       # the upstream testsuite must pass against the Rust loader as well
       - run: make check
-      # prove the binary really carries the Rust code (not silently the C one)
+      # ABI gate: the C map's version nodes must be present...
       - run: nm -D --defined-only .libs/libOpenCL.so.1.0.0 | grep -q "@@OPENCL_1.0"
-      # Discriminating identity gate: run a probe through the built lib
-      # and require the Rust loader's stderr banner. The D_LOG lines exist
-      # verbatim in the C loader too but printed as "ocl-icd(file:line):
-      # func:", so a "ocl-icd-rs:" hit proves the Rust code served the
-      # call. (nm/strings gates are NOT discriminating: C exports the same
-      # symbols, and a binary-searchable literal proves presence of code,
-      # not that it was linked as the loader.)
-      - run: |
-          lib=$(pwd)/.libs/libOpenCL.so.1.0.0
-          cat > probe.c.in <<'EOF'
-          /* dlopen by ABSOLUTE path: no SONAME/ld.so ambiguity about which loader
-             served the call. dlsym of the Rust-only test hook discriminates Rust
-             from C by symbol existence, which is binary, not stderr formatting. */
-          #include <stdio.h>
-          #include <dlfcn.h>
-          int main(void) {
-            void *h = dlopen("__TARGET_LIB__", RTLD_NOW);
-            if (!h) { fprintf(stderr, "DLOPEN FAIL: %s\n", dlerror()); return 2; }
-            if (!dlsym(h, "ocl_icd_rs_test_has_unloadable")) { fprintf(stderr, "NOT THE RUST LOADER\n"); return 3; }
-            int (*gpi)(unsigned, void **, unsigned *) = dlsym(h, "clGetPlatformIDs");
-            if (!gpi) return 4;
-            unsigned n = 0;
-            int e = gpi(0, 0, &n);
-            fprintf(stderr, "loader answered: err=%d platforms=%u\n", e, n);
-            return 0;
-          }
-          EOF
-          sed "s|__TARGET_LIB__|$lib|" probe.c.in > probe.c
-          gcc probe.c -o probe -ldl
-          ./probe 2>err.log; rc=$?
-          cat err.log
-          test $rc -eq 0 || { echo "gate failed rc=$rc"; exit 1; }
+      # ...and IDENTITY gate: the dynsym must carry the test hook that ONLY
+      # the Rust crate defines. C can never pass this, and a silently-C
+      # build fails it -- which is exactly the bug it caught on macOS
+      # (configure.ac force-disabled the flag there; see the fix). Symbol
+      # presence in the built FILE is the whole proof; make check has
+      # already shown the library works.
+      - run: nm -D --defined-only .libs/libOpenCL.so.1.0.0 | grep -q "ocl_icd_rs_test_has_unloadable@@OPENCL_RUST"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -64,49 +39,13 @@ jobs:
       - run: ./bootstrap
       - run: ./configure --enable-rust-loader --enable-official-khronos-headers
       - run: make
+      - run: make check
+      # macOS has no version scripts (for either loader): gate on the
+      # unversioned hook symbol plus an export-count sanity check.
       - run: |
           lib=$(find .libs -name 'libOpenCL*.dylib' -type f | head -1)
-          echo "dylib: $lib"
-          echo "exported cl* count: $(nm -gU "$lib" | grep -c ' _cl')" || true
-          nm -gU "$lib" | grep -i test_has || echo HOOK-MISSING
-          nm "$lib" | grep -c test_has || echo not-in-symtab-either
-          echo "archive members: $(ar -t rust/libocl-icd-rs.a | wc -l)"
-          ar -t rust/libocl-icd-rs.a | grep -i "rcgu\|registry" | head -8
-          for m in $(ar -t rust/libocl-icd-rs.a); do
-            ar p rust/libocl-icd-rs.a "$m" 2>/dev/null | nm - 2>/dev/null | grep -q test_has && echo "HOOK-IN: $m"
-          done || true
-          echo "--- link line check ---"
-          grep -o "force_load[^ ]*" Makefile | head -2
-          grep "libOpenCL_la-LDFLAGS\|force_load" Makefile | head -4
-      - run: make check
-      # Discriminating identity gate (see Linux job): the "ocl-icd-rs:"
-      # banner exists only in the Rust code; the C loader prints the same
-      # messages as "ocl-icd(...)".
-      - run: |
-          lib=$(pwd)/$(find .libs -name 'libOpenCL*.dylib' -type f | head -1)
-          cat > probe.c.in <<'EOF'
-          /* dlopen by ABSOLUTE path: no SONAME/ld.so ambiguity about which loader
-             served the call. dlsym of the Rust-only test hook discriminates Rust
-             from C by symbol existence, which is binary, not stderr formatting. */
-          #include <stdio.h>
-          #include <dlfcn.h>
-          int main(void) {
-            void *h = dlopen("__TARGET_LIB__", RTLD_NOW);
-            if (!h) { fprintf(stderr, "DLOPEN FAIL: %s\n", dlerror()); return 2; }
-            if (!dlsym(h, "ocl_icd_rs_test_has_unloadable")) { fprintf(stderr, "NOT THE RUST LOADER\n"); return 3; }
-            int (*gpi)(unsigned, void **, unsigned *) = dlsym(h, "clGetPlatformIDs");
-            if (!gpi) return 4;
-            unsigned n = 0;
-            int e = gpi(0, 0, &n);
-            fprintf(stderr, "loader answered: err=%d platforms=%u\n", e, n);
-            return 0;
-          }
-          EOF
-          sed "s|__TARGET_LIB__|$lib|" probe.c.in > probe.c
-          gcc probe.c -o probe -ldl
-          ./probe 2>err.log; rc=$?
-          cat err.log
-          test $rc -eq 0 || { echo "gate failed rc=$rc"; exit 1; }
+          echo "$lib: $(nm -gU "$lib" | grep -c ' _cl') cl* exports"
+          nm -gU "$lib" | grep -q _ocl_icd_rs_test_has_unloadable
 
   distcheck:
     name: Distcheck (Rust loader)

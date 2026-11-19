@@ -168,19 +168,16 @@ AC_ARG_ENABLE([rust-loader],
   [rust_loader=$enableval],
   [rust_loader=no])
 AS_IF([test x"$rust_loader" != xno], [
-  AS_IF([test "x$macos" = xyes], [
-    AC_MSG_WARN([--enable-rust-loader is not supported on MacOSX, ignored])
-    rust_loader=no
-  ], [
-    AC_CHECK_PROG([RUSTC], [rustc], [rustc], [no])
-    AS_IF([test "x$RUSTC" = xno], [
-      AS_IF([test x"$rust_loader" = xyes],
-        [AC_MSG_ERROR([rustc not found but --enable-rust-loader was requested])],
-        [rust_loader=no])], [
-      AC_CHECK_PROG([CARGO], [cargo], [cargo], [no])
-      AS_IF([test "x$CARGO" = xno],
-        [AC_MSG_ERROR([cargo not found but --enable-rust-loader was requested])])
-    ])
+  dnl macOS supported as well: the C loader drops symbol versioning there
+  dnl (USE_MAP=false) and the Rust branch mirrors it with -force_load.
+  AC_CHECK_PROG([RUSTC], [rustc], [rustc], [no])
+  AS_IF([test "x$RUSTC" = xno], [
+    AS_IF([test x"$rust_loader" = xyes],
+      [AC_MSG_ERROR([rustc not found but --enable-rust-loader was requested])],
+      [rust_loader=no])], [
+    AC_CHECK_PROG([CARGO], [cargo], [cargo], [no])
+    AS_IF([test "x$CARGO" = xno],
+      [AC_MSG_ERROR([cargo not found but --enable-rust-loader was requested])])
   ])
 ])
 AM_CONDITIONAL([RUST_LOADER], [test x"$rust_loader" != xno])
