@@ -24,14 +24,14 @@ jobs:
       # not that it was linked as the loader.)
       - run: |
           lib=$(pwd)/.libs/libOpenCL.so.1.0.0
-          cat > probe.c <<'EOF'
+          cat > probe.c.in <<'EOF'
           /* dlopen by ABSOLUTE path: no SONAME/ld.so ambiguity about which loader
              served the call. dlsym of the Rust-only test hook discriminates Rust
              from C by symbol existence, which is binary, not stderr formatting. */
           #include <stdio.h>
           #include <dlfcn.h>
           int main(void) {
-            void *h = dlopen(TARGET, RTLD_NOW);
+            void *h = dlopen("__TARGET_LIB__", RTLD_NOW);
             if (!h) { fprintf(stderr, "DLOPEN FAIL: %s\n", dlerror()); return 2; }
             if (!dlsym(h, "ocl_icd_rs_test_has_unloadable")) { fprintf(stderr, "NOT THE RUST LOADER\n"); return 3; }
             int (*gpi)(unsigned, void **, unsigned *) = dlsym(h, "clGetPlatformIDs");
@@ -42,7 +42,8 @@ jobs:
             return 0;
           }
           EOF
-          gcc -DTARGET='\"$lib\"' probe.c -o probe -ldl
+          sed "s|__TARGET_LIB__|$lib|" probe.c.in > probe.c
+          gcc probe.c -o probe -ldl
           ./probe 2>err.log; rc=$?
           cat err.log
           test $rc -eq 0 || { echo "gate failed rc=$rc"; exit 1; }
@@ -69,14 +70,14 @@ jobs:
       # messages as "ocl-icd(...)".
       - run: |
           lib=$(pwd)/$(find .libs -name 'libOpenCL*.dylib' -type f | head -1)
-          cat > probe.c <<'EOF'
+          cat > probe.c.in <<'EOF'
           /* dlopen by ABSOLUTE path: no SONAME/ld.so ambiguity about which loader
              served the call. dlsym of the Rust-only test hook discriminates Rust
              from C by symbol existence, which is binary, not stderr formatting. */
           #include <stdio.h>
           #include <dlfcn.h>
           int main(void) {
-            void *h = dlopen(TARGET, RTLD_NOW);
+            void *h = dlopen("__TARGET_LIB__", RTLD_NOW);
             if (!h) { fprintf(stderr, "DLOPEN FAIL: %s\n", dlerror()); return 2; }
             if (!dlsym(h, "ocl_icd_rs_test_has_unloadable")) { fprintf(stderr, "NOT THE RUST LOADER\n"); return 3; }
             int (*gpi)(unsigned, void **, unsigned *) = dlsym(h, "clGetPlatformIDs");
@@ -87,7 +88,8 @@ jobs:
             return 0;
           }
           EOF
-          gcc -DTARGET='\"$lib\"' probe.c -o probe -ldl
+          sed "s|__TARGET_LIB__|$lib|" probe.c.in > probe.c
+          gcc probe.c -o probe -ldl
           ./probe 2>err.log; rc=$?
           cat err.log
           test $rc -eq 0 || { echo "gate failed rc=$rc"; exit 1; }
