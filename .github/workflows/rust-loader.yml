@@ -64,6 +64,12 @@ jobs:
       - run: ./bootstrap
       - run: ./configure --enable-rust-loader --enable-official-khronos-headers
       - run: make
+      - run: |
+          lib=$(find .libs -name 'libOpenCL*.dylib' -type f | head -1)
+          echo "dylib: $lib"
+          echo "exported cl* count: $(nm -gU "$lib" | grep -c ' _cl')" || true
+          nm -gU "$lib" | grep -i test_has || echo HOOK-MISSING
+          nm "$lib" | grep -c test_has || echo not-in-symtab-either
       - run: make check
       # Discriminating identity gate (see Linux job): the "ocl-icd-rs:"
       # banner exists only in the Rust code; the C loader prints the same
