@@ -70,6 +70,14 @@ jobs:
           echo "exported cl* count: $(nm -gU "$lib" | grep -c ' _cl')" || true
           nm -gU "$lib" | grep -i test_has || echo HOOK-MISSING
           nm "$lib" | grep -c test_has || echo not-in-symtab-either
+          echo "archive members: $(ar -t rust/libocl-icd-rs.a | wc -l)"
+          ar -t rust/libocl-icd-rs.a | grep -i "rcgu\|registry" | head -8
+          for m in $(ar -t rust/libocl-icd-rs.a); do
+            ar p rust/libocl-icd-rs.a "$m" 2>/dev/null | nm - 2>/dev/null | grep -q test_has && echo "HOOK-IN: $m"
+          done || true
+          echo "--- link line check ---"
+          grep -o "force_load[^ ]*" Makefile | head -2
+          grep "libOpenCL_la-LDFLAGS\|force_load" Makefile | head -4
       - run: make check
       # Discriminating identity gate (see Linux job): the "ocl-icd-rs:"
       # banner exists only in the Rust code; the C loader prints the same
