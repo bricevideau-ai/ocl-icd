@@ -1034,6 +1034,11 @@ EOF
       nodes << "#{name} {\n  global:\n" + syms.map { |s| "    #{s};\n" }.join + tail
       prev = name
     }
+    # Test-only non-cl exports the crate defines (see registry.rs): an
+    # explicit allowlist, versioned under their own node so dlsym-by-name
+    # finds them; the CI identity gate probes this symbol.
+    extras = ['ocl_icd_rs_test_has_unloadable'].select { |x| defined.key?(x) }
+    nodes << "OPENCL_RUST {\n  global:\n" + extras.map { |x| "    #{x};\n" }.join + "} #{prev};" if prev && !extras.empty?
     File.write(out, nodes.join("\n\n") + "\n")
     total = nodes.sum { |b| b.count(';') }
     warn format('%d symbols in %d version nodes', total, nodes.length)

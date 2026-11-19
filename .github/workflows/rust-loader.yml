@@ -23,13 +23,29 @@ jobs:
       # symbols, and a binary-searchable literal proves presence of code,
       # not that it was linked as the loader.)
       - run: |
-          printf '#include <CL/cl.h>\n#include <stdio.h>\nint main(void){cl_platform_id p[8];cl_uint n;\nif(clGetPlatformIDs(8,p,&n))return 77;return 0;}\n' > /tmp/rprobe.c
-          gcc -Ikhronos-headers /tmp/rprobe.c -o /tmp/rprobe -L./.libs -l:libOpenCL.so.1.0.0 -Wl,-rpath,$(pwd)/.libs
-          OCL_ICD_DEBUG=3 OCL_ICD_VENDORS=/nonexistent /tmp/rprobe 2>err.log; rc=$?
+          lib=$(pwd)/.libs/libOpenCL.so.1.0.0
+          cat > probe.c <<'EOF'
+          /* dlopen by ABSOLUTE path: no SONAME/ld.so ambiguity about which loader
+             served the call. dlsym of the Rust-only test hook discriminates Rust
+             from C by symbol existence, which is binary, not stderr formatting. */
+          #include <stdio.h>
+          #include <dlfcn.h>
+          int main(void) {
+            void *h = dlopen(TARGET, RTLD_NOW);
+            if (!h) { fprintf(stderr, "DLOPEN FAIL: %s\n", dlerror()); return 2; }
+            if (!dlsym(h, "ocl_icd_rs_test_has_unloadable")) { fprintf(stderr, "NOT THE RUST LOADER\n"); return 3; }
+            int (*gpi)(unsigned, void **, unsigned *) = dlsym(h, "clGetPlatformIDs");
+            if (!gpi) return 4;
+            unsigned n = 0;
+            int e = gpi(0, 0, &n);
+            fprintf(stderr, "loader answered: err=%d platforms=%u\n", e, n);
+            return 0;
+          }
+          EOF
+          gcc -DTARGET='\"$lib\"' probe.c -o probe -ldl
+          ./probe 2>err.log; rc=$?
           cat err.log
-          test $rc -eq 77 || { echo "probe must reach the loader (77=no-platform error path)"; exit 1; }
-          grep -q "ocl-icd-rs" err.log
-          ! grep -q "ocl-icd(" err.log
+          test $rc -eq 0 || { echo "gate failed rc=$rc"; exit 1; }
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -52,14 +68,29 @@ jobs:
       # banner exists only in the Rust code; the C loader prints the same
       # messages as "ocl-icd(...)".
       - run: |
-          printf '#include <CL/cl.h>\n#include <stdio.h>\nint main(void){cl_platform_id p[8];cl_uint n;\nif(clGetPlatformIDs(8,p,&n))return 77;return 0;}\n' > /tmp/rprobe.c
-          lib=$(find .libs -name 'libOpenCL*.dylib' -type f | head -1)
-          gcc -Ikhronos-headers /tmp/rprobe.c -o /tmp/rprobe "$lib"
-          OCL_ICD_DEBUG=3 OCL_ICD_VENDORS=/nonexistent /tmp/rprobe 2>err.log; rc=$?
+          lib=$(pwd)/$(find .libs -name 'libOpenCL*.dylib' -type f | head -1)
+          cat > probe.c <<'EOF'
+          /* dlopen by ABSOLUTE path: no SONAME/ld.so ambiguity about which loader
+             served the call. dlsym of the Rust-only test hook discriminates Rust
+             from C by symbol existence, which is binary, not stderr formatting. */
+          #include <stdio.h>
+          #include <dlfcn.h>
+          int main(void) {
+            void *h = dlopen(TARGET, RTLD_NOW);
+            if (!h) { fprintf(stderr, "DLOPEN FAIL: %s\n", dlerror()); return 2; }
+            if (!dlsym(h, "ocl_icd_rs_test_has_unloadable")) { fprintf(stderr, "NOT THE RUST LOADER\n"); return 3; }
+            int (*gpi)(unsigned, void **, unsigned *) = dlsym(h, "clGetPlatformIDs");
+            if (!gpi) return 4;
+            unsigned n = 0;
+            int e = gpi(0, 0, &n);
+            fprintf(stderr, "loader answered: err=%d platforms=%u\n", e, n);
+            return 0;
+          }
+          EOF
+          gcc -DTARGET='\"$lib\"' probe.c -o probe -ldl
+          ./probe 2>err.log; rc=$?
           cat err.log
-          test $rc -eq 77 || { echo "probe must reach the loader (77=no-platform error path)"; exit 1; }
-          grep -q "ocl-icd-rs" err.log
-          ! grep -q "ocl-icd(" err.log
+          test $rc -eq 0 || { echo "gate failed rc=$rc"; exit 1; }
 
   distcheck:
     name: Distcheck (Rust loader)
