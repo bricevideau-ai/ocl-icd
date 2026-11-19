@@ -658,7 +658,8 @@ pub unsafe fn deinit_compound_body() -> cl_int {
 // exit skips unloading vendor code (prototype choice; avoids racing other
 // libraries' destructors).
 #[used]
-#[link_section = ".fini_array"]
+#[cfg_attr(not(target_os = "macos"), link_section = ".fini_array")]
+#[cfg_attr(target_os = "macos", link_section = "__TEXT,__mod_term_func")]
 static DESTRUCTOR: unsafe extern "C" fn() = destructor_fn;
 
 unsafe extern "C" fn destructor_fn() {
